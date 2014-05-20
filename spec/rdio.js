@@ -6,13 +6,6 @@ var chaiAsPromised = require('chai-as-promised'),
 
 chai.use(chaiAsPromised);
 
-function formatUrl( url ) {
-  var formatted = {};
-  formatted.base_url = null;
-  formatted.path = null;
-  return formatted;
-}
-
 describe('rdio', function() {
   describe('Getting artist data', function() {
     var api;
@@ -21,7 +14,6 @@ describe('rdio', function() {
         relative_dir = parsed_url.relative;
     before(function() {
       api = nock( base_url )
-        .log(console.log)
     });
     it('should return a list of artist data', function( done ) {
         api.post( relative_dir, "method=getArtistsInCollection")
@@ -40,13 +32,11 @@ describe('rdio', function() {
       expect(promise).to.eventually.eql(['r123', 'r592'])
         .and.notify(done);
     });
-    it('should reject if there is no access token');
-    it('should reject the promise if rdio returns an error');
-    it('should do something? if there are no artist ids');
+    it('should reject the promise if the access token is invalid', function( done ) {
+      api.post( relative_dir, "method=getArtistsInCollection" )
+        .reply(401, {"error_description":"Invalid or expired access token","error":"invalid_token"});
+      var promise = rdio.getArtists('invalid_token' );
+      expect(promise).to.eventually.be.rejected.and.notify(done);
+    });
   });
 });
-
-
-
-
-

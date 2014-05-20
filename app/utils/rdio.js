@@ -17,9 +17,9 @@ exports.getArtists = function( access_token ) {
       body : body,
       json : true
     }, function( err, r, body ) {
-      if ( err ) {
+      if ( err || body.error ) {
         console.log('error occurred when retrieving artist list from rdio');
-        reject();
+        return reject();
       }
       var rdio_ids = formatArtistData(body.result);
       return resolve(rdio_ids);
