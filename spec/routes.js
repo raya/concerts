@@ -1,9 +1,8 @@
-var chai = require('chai'),
-    nock = require('nock');
-process.env.NODE_ENV = 'test';
-
-var app = require('../app/app'),
+var passportStub = require('./helpers/passport_stub'),
+    app = require('../app/app'),
     request = require('supertest')(app);
+
+passportStub.install(app);
 
 describe('/concerts', function() {
   it('should redirect to home if user has not authorized app', function() {
@@ -16,5 +15,16 @@ describe('/concerts', function() {
         }
       });
   });
-  it('should load /concerts if user has authorized app');
+  it('should load /concerts if user has authorized app', function( done ) {
+    passportStub.login({ username : 'test' });
+    request
+      .get('/concerts')
+      .expect(200)
+      .end(function( err, res ) {
+        if ( err ) {
+          throw err;
+        }
+        done();
+      });
+  });
 });

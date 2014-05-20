@@ -16,9 +16,10 @@
     "chai" : "1.9.x",
     "chai-as-promised": "4.1.x",
     "chai-passport-strategy": "0.2.x",
+    "grunt" : "0.4.x",
+    "grunt-mocha-test" : "0.10.x",
     "mocha" : "1.18.x",
     "nock": "0.31.x",
     "supertest" : "0.12.x"
   }
-
 }
