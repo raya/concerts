@@ -1,6 +1,7 @@
 var Promise = require('bluebird'),
     rdio = Promise.promisifyAll(require('../utils/rdio'));
 
+var echonest = Promise.promisifyAll(require('../utils/echonest'));
 module.exports = function( app, passport ) {
   app.get('/', function( req, res, next ) {
     res.render('home');
@@ -15,7 +16,8 @@ module.exports = function( app, passport ) {
 
   app.get('/users/new', function( req, res ) {
     Promise.all([
-      rdio.getArtistsAsync(req.session.passport.user.accessToken)
+      rdio.getArtistsAsync(req.session.passport.user.accessToken),
+      echonest.createCatalogProfileAsync()
     ]).then(function( result ) {
       // response
     });

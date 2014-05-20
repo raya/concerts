@@ -5,6 +5,9 @@ config.TEST_PORT = 5001;
 
 
 // External API info
+config.ECHONEST_API_KEY   = process.env.ECHONEST_API_KEY;
+config.ECHONEST_API_URL   = 'http://developer.echonest.com/api/v4/';
+
 config.RDIO_AUTHORIZATION_URL = 'https://www.rdio.com/oauth2/authorize';
 config.RDIO_API_URL = 'https://www.rdio.com/api/1/';
 config.RDIO_CALLBACK_URL = 'http://127.0.0.1:5000/users/authorize/rdio/callback';
