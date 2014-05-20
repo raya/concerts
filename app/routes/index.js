@@ -1,3 +1,6 @@
+var Promise = require('bluebird'),
+    rdio = Promise.promisifyAll(require('../utils/rdio'));
+
 module.exports = function( app, passport ) {
   app.get('/', function( req, res, next ) {
     res.render('home');
@@ -10,11 +13,20 @@ module.exports = function( app, passport ) {
       successRedirect : '/concerts',
       session : true }));
 
-  app.get( '/concerts', function( req, res ) {
-    if ( !req.user ) {
-      return res.redirect( '/' );
-    }
-    res.render( 'concerts' );
+  app.get('/users/new', function( req, res ) {
+    Promise.all([
+      rdio.getArtistsAsync(req.session.passport.user.accessToken)
+    ]).then(function( result ) {
+      // response
+    });
   });
+
+  app.get('/concerts', function( req, res ) {
+    if ( !req.user ) {
+      return res.redirect('/');
+    }
+    res.render('concerts');
+  });
+
 
 };
