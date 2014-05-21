@@ -19,14 +19,14 @@ describe('Echonest', function() {
           type : 'artist',
           name : 'tasteprofile_random_name',
           id : 'TEST_TICKET_ID' } });
-      var promise = echonest.createCatalogProfile();
+      var promise = echonest.createCatalogProfileAsync();
       expect(promise).to.eventually.equal('TEST_TICKET_ID').
         and.notify(done);
     });
     it('should reject if Echonest returns an invalid status code', function( done ) {
       api.reply(200,
         {"response" : {"status" : {"version" : "4.2", "code" : 1, "message" : "1|Invalid key: Unknown"}}});
-      var promise = echonest.createCatalogProfile();
+      var promise = echonest.createCatalogProfileAsync();
       expect(promise).to.eventually.be.rejected.and.notify(done);
     });
   });

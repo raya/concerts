@@ -6,29 +6,25 @@ var config = require('../config/config'),
 /*
  Get a list of the artists in a user's rdio collection
  */
-exports.getArtists = function( access_token ) {
-  return new Promise(function( resolve, reject ) {
-    var body = qs.stringify({ method : 'getArtistsInCollection' });
-    console.log('making request to rdio');
-    request.post({
-      url : config.RDIO_API_URL,
-      headers : { "Content-type" : 'application/x-www-form-urlencoded',
-        "Authorization" : 'Bearer ' + access_token },
-      body : body,
-      json : true
-    }, function( err, r, body ) {
-      if ( err || body.error ) {
-        console.log('error occurred when retrieving artist list from rdio');
-        return reject();
-      }
-      var rdio_ids = formatArtistData(body.result);
-      return resolve(rdio_ids);
-    });
+exports.getArtists = function( access_token, callback ) {
+  var body = qs.stringify({ method : 'getArtistsInCollection' });
+  request.post({
+    url : config.RDIO_API_URL,
+    headers : { "Content-type" : 'application/x-www-form-urlencoded',
+      "Authorization" : 'Bearer ' + access_token },
+    body : body,
+    json : true
+  }, function( err, r, body ) {
+    if ( err || body.error ) {
+      return callback('error');
+    }
+    var rdio_ids = formatArtistData(body.result);
+    return callback(null, rdio_ids);
   });
 };
 
 /*
-  Strip out the artistKey value from an array of artist data
+ Strip out the artistKey value from an array of artist data
  */
 function formatArtistData( artists ) {
   var rdio_ids = [];

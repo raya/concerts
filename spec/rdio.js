@@ -28,14 +28,14 @@ describe('rdio', function() {
               artistKey : 'r592'}
           ]
         });
-      var promise = rdio.getArtists('test_access_token');
+      var promise = rdio.getArtistsAsync('test_access_token');
       expect(promise).to.eventually.eql(['r123', 'r592'])
         .and.notify(done);
     });
     it('should reject the promise if the access token is invalid', function( done ) {
       api.post( relative_dir, "method=getArtistsInCollection" )
         .reply(401, {"error_description":"Invalid or expired access token","error":"invalid_token"});
-      var promise = rdio.getArtists('invalid_token' );
+      var promise = rdio.getArtistsAsync('invalid_token' );
       expect(promise).to.eventually.be.rejected.and.notify(done);
     });
   });
