@@ -3,6 +3,10 @@ var config = {};
 config.development_port = 5000;
 config.TEST_PORT = 5001;
 
+// Redis
+config.REDIS_IP = '127.0.0.1';
+config.REDIS_PORT = '6379';
+config.CONCERTS_SESSION_SECRET = process.env.CONCERTS_SESSION_SECRET;
 
 // External API info
 config.ECHONEST_API_KEY   = process.env.ECHONEST_API_KEY;

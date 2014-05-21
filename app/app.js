@@ -5,7 +5,8 @@
 var config = require('./config/config'),
     express = require('express'),
     http = require('http'),
-    passport = require('passport');
+    passport = require('passport'),
+    RedisStore = require('connect-redis')(express);
 
 var app = express();
 
@@ -22,7 +23,17 @@ app.set('view engine', 'jade');
 app.use(express.logger());
 app.use(express.cookieParser());
 app.use(express.bodyParser());
-app.use(express.session({secret:'hi'}));
+app.use(express.session({
+    store : new RedisStore({
+      host : config.REDIS_IP,
+      port : config.REDIS_PORT,
+      prefix : 'sess',
+      ttl : 7200 // 7200 seconds = 2 hours
+    }),
+    cookie : { maxAge : (3600000 * 2 ) }, //3600000ms * 2 = 2 hours
+    secret : config.CONCERTS_SESSION_SECRET
+  }));
+
 app.use(express.errorHandler());
 
 app.use(passport.initialize());
