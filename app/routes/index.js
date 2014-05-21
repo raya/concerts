@@ -14,12 +14,21 @@ module.exports = function( app, passport ) {
       successRedirect : '/concerts',
       session : true }));
 
+  /*
+    1 - Get list of user's artists from Rdio & create a profile on Echonest
+    2 - Create a file of artists to send to Echonest
+   */
   app.get('/users/new', function( req, res ) {
     Promise.all([
       rdio.getArtistsAsync(req.session.passport.user.accessToken),
       echonest.createCatalogProfileAsync()
-    ]).then(function( result ) {
-      // response
+    ]).spread(function( artists, catalog_id ) {
+      //TODO - Handle user not having artists
+      var catalog_file = echonest.createCatalogDataFile();
+      return echonest.sendFileAsync( catalog_file, catalog_id );
+    }).then( function( ticket_id ) {
+      console.log(' promise continues after sending to echonest');
+
     });
   });
 

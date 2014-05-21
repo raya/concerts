@@ -40,17 +40,58 @@ exports.createCatalogProfile = function( callback ) {
   });
 };
 
+/*
+ Formats rdio artist ids to send to Echonest
+ Output format:
+ [ { item : {
+     artist_id : rdio-US:artist:ID_NUM
+     item_id : ANY_UNIQUE_ID
+ }]
+ */
 exports.createCatalogDataFile = function( artists ) {
   var catalog = [];
 
-  if ( !Array.isArray( artists ) || artists.length < 1 ) { return []; }
-  artists.forEach( function( artist, index ) {
+  if ( !Array.isArray(artists) || artists.length < 1 ) {
+    return [];
+  }
+  artists.forEach(function( artist, index ) {
     var entry = { item : {} };
     entry.item.item_id = String(index);
     entry.item.artist_id = 'rdio-US:artist:' + String(artist);
     catalog.push(entry);
   });
   return catalog;
+};
+
+/*
+ Sends a catalog file of formatted artist ids to Echonest
+ */
+exports.sendFile = function( catalog_file, catalog_id, callback ) {
+  var url = config.ECHONEST_API_URL + 'tasteprofile/update';
+  var form = {
+    api_key : config.ECHONEST_API_KEY,
+    format : 'json',
+    id : catalog_id,
+    data : JSON.stringify(catalog_file)
+  };
+
+  request.post({
+    url : url,
+    headers : {'content-type' : 'application/x-www-form-urlencoded'},
+    form : form
+  }, function( err, r, body ) {
+    try {
+      var result = JSON.parse(body);
+    } catch ( e ) {
+      return callback(body);
+    }
+
+    if ( result.response.status.code !== RESPONSE_CODES.VALID ) {
+      return callback(result);
+    }
+    return callback(null, result.response.ticket);
+  });
+
 };
 
 /* Generate a random name to give to a Catalog profile */

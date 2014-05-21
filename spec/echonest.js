@@ -31,20 +31,54 @@ describe('Echonest', function() {
     });
   });
 
-  describe('Creating a catalog data file', function() {
+  describe('Creating a catalog file', function() {
     it('format the data file', function() {
       var artists = [ 'r123', 'r456' ];
-      var catalog = echonest.createCatalogDataFile( artists );
+      var catalog = echonest.createCatalogDataFile(artists);
       var first_item = catalog[0];
-      expect( first_item.item.item_id).to.equal('0');
-      expect( first_item.item.artist_id).to.equal('rdio-US:artist:r123' );
+      expect(first_item.item.item_id).to.equal('0');
+      expect(first_item.item.artist_id).to.equal('rdio-US:artist:r123');
       var second_item = catalog[1];
-      expect( second_item.item.item_id).to.equal('1');
-      expect( second_item.item.artist_id).to.equal('rdio-US:artist:r456' );
+      expect(second_item.item.item_id).to.equal('1');
+      expect(second_item.item.artist_id).to.equal('rdio-US:artist:r456');
     });
     it('should return an empty array if there are no artists', function() {
-      var catalog = echonest.createCatalogDataFile( [] );
-      expect( catalog.length).to.equal(0);
+      var catalog = echonest.createCatalogDataFile([]);
+      expect(catalog.length).to.equal(0);
+    });
+  });
+
+  describe('Sending a catalog file', function() {
+    var api,
+        catalog_file,
+        catalog_id;
+    before(function() {
+      api = nock(config.ECHONEST_API_URL)
+        .filteringRequestBody(/.*/, '*')
+        .post('/api/v4/tasteprofile/update', '*');
+      catalog_id = 1;
+      catalog_file = [
+        { item : {
+          0 : {
+            item_id : 0,
+            artist_id : 'rdio-US:artist:123'
+          }
+        }}
+      ];
+    });
+    it('should return a ticket id if successful', function() {
+      api.reply(200, {"response" : {"status" : {"version" : "4.2", "code" : 0, "message" : "Success"},
+        "ticket" : "CAGXIQJ1ZZ1FA346FE28"}
+      });
+      var promise = echonest.sendFileAsync(catalog_file, catalog_id);
+      expect(promise).to.eventually.equal('CAGXIQJ1ZZ1FA346FE28');
+    });
+    it('should return an error if the response was invalid', function( done ) {
+      api.reply(200, {"response" : {"status" : {"version" : "4.2", "code" : 4,
+        "message" : "limit - Missing Parameter: a \"name\" or \"id\" must be provided"}
+      }});
+      var promise = echonest.sendFileAsync(catalog_file, catalog_id);
+      expect(promise).to.eventually.be.rejected.and.notify(done);
     });
   });
 
