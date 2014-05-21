@@ -1,6 +1,7 @@
 var config = require('../config/config'),
     Promise = require('bluebird'),
-    request = require('request');
+    request = require('request'),
+    _ = require('lodash');
 
 // From http://developer.echonest.com/docs/v4#response-codes
 var RESPONSE_CODES = {
@@ -32,6 +33,7 @@ exports.createCatalogProfile = function( callback ) {
     } catch ( e ) {
       return callback(body);
     }
+
     if ( result.response.status.code === RESPONSE_CODES.VALID ) {
       return callback(null, result.response.id);
     } else {
@@ -118,8 +120,61 @@ exports.sendFile = function( catalog_file, catalog_id, callback ) {
     }
     return callback(null, result.response.ticket);
   });
-
 };
+
+exports.readProfileData = function( catalog_id, callback ) {
+  var url = config.ECHONEST_API_URL + 'tasteprofile/read?api_key='
+    + config.ECHONEST_API_KEY
+    + '&format=json&bucket=id:songkick&bucket=hotttnesss&results=1000'
+    + '&id=' + catalog_id;
+
+  request.get({
+    url : url
+  }, function( err, r, body ) {
+    var result;
+    try {
+      result = JSON.parse(body);
+    } catch ( e ) {
+      return callback(e);
+    }
+    if ( result.response.status.code !== RESPONSE_CODES.VALID ) {
+      return callback( body );
+    }
+    var items = formatProfileData(result.response.catalog.items);
+    return callback(null, items);
+
+  });
+};
+
+/* Format catalog data from echonest
+ * Remove the foreign_id : songkick:artist:ID_NUM from items and
+ * returns them in a hash:
+ * { songkick_id : artist_name }
+ * */
+function formatProfileData( artists ) {
+  var songkick_ids = {},
+      formattedId;
+
+  _.forEach(artists, function( artist ) {
+    if ( artist.foreign_ids ) {
+      _.forEach(artist.foreign_ids, function( id ) {
+        if ( id.catalog === 'songkick' ) {
+          formattedId = strip(id.foreign_id);
+          songkick_ids[formattedId] = artist.artist_name;
+        }
+      });
+    }
+  });
+
+  return songkick_ids;
+}
+
+/* Remove the songkick:artist: prefix before the ID #
+ */
+function strip( name ) {
+  var index = name.lastIndexOf(':');
+  return name.substring(index + 1, name.length);
+}
 
 /* Generate a random name to give to a Catalog profile */
 function generateRandomName() {

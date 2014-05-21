@@ -1,6 +1,7 @@
 var chaiAsPromised = require('chai-as-promised'),
     config = require('../app/config/config'),
     echonest = require('../app/utils/echonest'),
+    _ = require('lodash'),
     nock = require('nock');
 chai.use(chaiAsPromised);
 
@@ -111,37 +112,106 @@ describe('Echonest', function() {
           }
         });
 
-      var promise = echonest.getStatusAsync( ticket_id );
-      expect( promise).to.eventually.be.fulfilled.
+      var promise = echonest.getStatusAsync(ticket_id);
+      expect(promise).to.eventually.be.fulfilled.
         and.equal(true).and.notify(done);
     });
-
-    it('should return false if processing is not yet finished', function(done) {
-      api.reply( 200, {
-        "response": {
-          "status": {
-            "code": 0,
-            "message": "Success",
-            "version": "4.2"
+    it('should return false if processing is not yet finished', function( done ) {
+      api.reply(200, {
+        "response" : {
+          "status" : {
+            "code" : 0,
+            "message" : "Success",
+            "version" : "4.2"
           },
-          "ticket_status": "pending"
+          "ticket_status" : "pending"
         }});
-      var promise = echonest.getStatusAsync( ticket_id );
-      expect( promise).to.eventually.equal(false).and.notify( done );
+      var promise = echonest.getStatusAsync(ticket_id);
+      expect(promise).to.eventually.equal(false).and.notify(done);
     });
     it('should return an error if the catalog couldn\t be processed', function( done ) {
-      api.reply( 200, {
-        "response": {
-        "status": {
-          "code": 0,
-            "message": "Success",
-            "version": "4.2"
-        },
-        "ticket_status": "error",
-          "details": "too many items in tasteprofile"
-      }});
-      var promise = echonest.getStatusAsync( ticket_id );
-      expect( promise).to.eventually.be.rejected.and.notify( done );
+      api.reply(200, {
+        "response" : {
+          "status" : {
+            "code" : 0,
+            "message" : "Success",
+            "version" : "4.2"
+          },
+          "ticket_status" : "error",
+          "details" : "too many items in tasteprofile"
+        }});
+      var promise = echonest.getStatusAsync(ticket_id);
+      expect(promise).to.eventually.be.rejected.and.notify(done);
     });
+  });
+  describe('retrieving a completed catalog', function() {
+    var api,
+        catalog_id = 'CXZ1';
+    before(function() {
+      var url = '/api/v4/tasteprofile/read?api_key='
+        + config.ECHONEST_API_KEY
+        + '&format=json&bucket=id:songkick'
+        + '&bucket=hotttnesss' //Bug? - Echonest won't return songkick IDs without this
+        + '&results=1000'
+        + '&id=' + catalog_id;
+      api = nock(config.ECHONEST_API_URL)
+        .get(url);
+    });
+    it('should return items in the correct format', function( done ) {
+      var response = {
+        "response" : {
+          "status" : {
+            "version" : "4.2",
+            "code" : 0,
+            "message" : "Success"
+          },
+          "catalog" : {
+            "name" : "tasteprofile_kf1crvvs050tqpvi",
+            "items" : [
+              {
+                "artist_name" : "Various Artists",
+                "request" : {
+                  "item_id" : "0",
+                  "artist_id" : "rdio-US:artist:r62"
+                }
+              },
+              {
+                "artist_name" : "2Pac",
+                "foreign_id" : "CAEXEXG14620411F98:artist:1",
+                "foreign_ids" : [
+                  {
+                    "catalog" : "songkick",
+                    "foreign_id" : "songkick:artist:40585"
+                  }
+                ],
+                "request" : {
+                  "item_id" : "1",
+                  "artist_id" : "rdio-US:artist:r66033"
+                }
+              }
+            ]
+          }
+        }};
+      api.reply(200, response);
+      var promise = echonest.readProfileDataAsync(catalog_id);
+      expect(promise).to.eventually.be.fulfilled.then(function( result ) {
+        expect(_.size(response)).to.equal(1);
+        expect(result[ '40585' ]).to.equal('2Pac');
+      }).should.notify(done);
+    });
+    it('should return an error if code is not valid', function( done ) {
+      var response = {
+        "response" : {
+          "status" : {
+            "version" : "4.2",
+            "code" : -1,
+            "message" : "Success"
+          }}};
+      api.reply( 200, response );
+      var promise = echonest.readProfileDataAsync( catalog_id );
+      expect( promise).to.eventually.be.rejected.and.notify(done);
+    });
+    it('should make additional calls if all items aren\'t returned');
+
   });
 });
