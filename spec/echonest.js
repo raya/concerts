@@ -31,4 +31,21 @@ describe('Echonest', function() {
     });
   });
 
+  describe('Creating a catalog data file', function() {
+    it('format the data file', function() {
+      var artists = [ 'r123', 'r456' ];
+      var catalog = echonest.createCatalogDataFile( artists );
+      var first_item = catalog[0];
+      expect( first_item.item.item_id).to.equal('0');
+      expect( first_item.item.artist_id).to.equal('rdio-US:artist:r123' );
+      var second_item = catalog[1];
+      expect( second_item.item.item_id).to.equal('1');
+      expect( second_item.item.artist_id).to.equal('rdio-US:artist:r456' );
+    });
+    it('should return an empty array if there are no artists', function() {
+      var catalog = echonest.createCatalogDataFile( [] );
+      expect( catalog.length).to.equal(0);
+    });
+  });
+
 });

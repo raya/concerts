@@ -38,7 +38,19 @@ exports.createCatalogProfile = function( callback ) {
       return callback('invalid echonest code');
     }
   });
+};
 
+exports.createCatalogDataFile = function( artists ) {
+  var catalog = [];
+
+  if ( !Array.isArray( artists ) || artists.length < 1 ) { return []; }
+  artists.forEach( function( artist, index ) {
+    var entry = { item : {} };
+    entry.item.item_id = String(index);
+    entry.item.artist_id = 'rdio-US:artist:' + String(artist);
+    catalog.push(entry);
+  });
+  return catalog;
 };
 
 /* Generate a random name to give to a Catalog profile */
