@@ -17,8 +17,6 @@ module.exports = function( passport, config ) {
     callbackURL : config.RDIO_CALLBACK_URL
   },
   function( accessToken, refreshToken, profile, done ) {
-    console.log( 'passport callback' );
-    console.log( arguments );
     if ( accessToken && refreshToken ) {
       var user = {};
       user.accessToken = accessToken;
