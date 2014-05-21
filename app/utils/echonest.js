@@ -44,8 +44,8 @@ exports.createCatalogProfile = function( callback ) {
  Formats rdio artist ids to send to Echonest
  Output format:
  [ { item : {
-     artist_id : rdio-US:artist:ID_NUM
-     item_id : ANY_UNIQUE_ID
+ artist_id : rdio-US:artist:ID_NUM
+ item_id : ANY_UNIQUE_ID
  }]
  */
 exports.createCatalogDataFile = function( artists ) {
@@ -61,6 +61,33 @@ exports.createCatalogDataFile = function( artists ) {
     catalog.push(entry);
   });
   return catalog;
+};
+
+/*
+ Checks the status of a catalog update
+ */
+exports.getStatus = function( ticket_id, callback ) {
+  var url = config.ECHONEST_API_URL + 'tasteprofile/status?api_key='
+    + config.ECHONEST_API_KEY + '&format=json&ticket=' + ticket_id;
+
+  request.get({
+    url : url
+  }, function( err, r, body ) {
+    var result;
+    try {
+      result = JSON.parse(body);
+    } catch ( e ) {
+      return callback(body);
+    }
+    var ticket_status = result.response.ticket_status;
+    if ( ticket_status === 'complete' ) {
+      return callback(null, true);
+    } else if ( ticket_status == 'pending' ) {
+      return callback(null, false);
+    } else {
+      return callback(body);
+    }
+  });
 };
 
 /*

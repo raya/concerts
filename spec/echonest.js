@@ -82,4 +82,66 @@ describe('Echonest', function() {
     });
   });
 
+  describe('Checking catalog status', function() {
+    var api,
+        ticket_id = '293493';
+    before(function() {
+      api = nock(config.ECHONEST_API_URL)
+        .get('/api/v4/tasteprofile/status?api_key=' + config.ECHONEST_API_KEY +
+          '&format=json&ticket=' + ticket_id);
+    });
+    it('should return true if processing is complete', function( done ) {
+      api.reply(200,
+        {
+          "response" : {
+            "status" : {
+              "code" : 0,
+              "message" : "Success",
+              "version" : "4.2"
+            },
+            "ticket_status" : "complete",
+            "total_items" : 21,
+            "items_updated" : 21,
+            "percent_complete" : 100,
+            "update_info" : [
+              { "item_id" : "1", "info" : " lookup failed"},
+              { "item_id" : "3", "info" : "bad value"},
+              { "item_id" : "8", "info" : "couldn't resolve item"}
+            ]
+          }
+        });
+
+      var promise = echonest.getStatusAsync( ticket_id );
+      expect( promise).to.eventually.be.fulfilled.
+        and.equal(true).and.notify(done);
+    });
+
+    it('should return false if processing is not yet finished', function(done) {
+      api.reply( 200, {
+        "response": {
+          "status": {
+            "code": 0,
+            "message": "Success",
+            "version": "4.2"
+          },
+          "ticket_status": "pending"
+        }});
+      var promise = echonest.getStatusAsync( ticket_id );
+      expect( promise).to.eventually.equal(false).and.notify( done );
+    });
+    it('should return an error if the catalog couldn\t be processed', function( done ) {
+      api.reply( 200, {
+        "response": {
+        "status": {
+          "code": 0,
+            "message": "Success",
+            "version": "4.2"
+        },
+        "ticket_status": "error",
+          "details": "too many items in tasteprofile"
+      }});
+      var promise = echonest.getStatusAsync( ticket_id );
+      expect( promise).to.eventually.be.rejected.and.notify( done );
+    });
+  });
 });
