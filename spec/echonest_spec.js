@@ -211,7 +211,6 @@ describe('Echonest', function() {
       var promise = echonest.readProfileDataAsync( catalog_id );
       expect( promise).to.eventually.be.rejected.and.notify(done);
     });
-    it('should make additional calls if all items aren\'t returned');
-
+    it('should make additional calls if all items aren\'t returned' );
   });
 });

@@ -5,6 +5,7 @@
 var config = require('./config/config'),
     express = require('express'),
     http = require('http'),
+    kue = require( 'kue'),
     passport = require('passport'),
     RedisStore = require('connect-redis')(express);
 
@@ -39,6 +40,9 @@ app.use(express.errorHandler());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
+
+// Start Kue interface
+kue.app.listen( config.KUE_PORT );
 
 // Bootstrap passport file
 require( './config/passport' )( passport, config );
