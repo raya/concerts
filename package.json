@@ -25,6 +25,8 @@
     "mock-kue" : "0.0.7",
     "nock": "0.31.x",
     "parseUri" : "1.2.3-2",
-    "supertest" : "0.12.x"
+    "supertest" : "0.12.x",
+    "webdriverjs" : "1.7.x"
+
   }
 }

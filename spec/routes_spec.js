@@ -1,8 +1,4 @@
-var passportStub = require('./helpers/passport_stub'),
-    app = require('../app/app'),
-    request = require('supertest')(app);
-
-passportStub.install(app);
+var request = require('supertest')(app);
 
 describe('routes', function() {
   describe('/concerts', function() {
@@ -25,11 +21,12 @@ describe('routes', function() {
           if ( err ) {
             throw err;
           }
+          passportStub.logout();
           done();
         });
     });
   });
-  describe( '/users/new', function() {
+  describe('/users/new', function() {
 
   });
 });

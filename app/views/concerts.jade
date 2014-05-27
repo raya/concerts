@@ -1,6 +1,20 @@
 html
 head
+  link( rel="stylesheet", type="text/css", href="/public/stylesheets/app.css" )
+  title Concerts
 body
-  h1 Concerts are here
+  h1 What's Your Area?
+  #map-canvas
+  form.location( method="POST" )
+    label( for="city" ) City
+    input( type="text", name="city", id="city" )
+    button( type="submit", name="citySubmitBtn" ) Submit
+    .error-msg
+  form.next-section
+    button( type="submit" ) Next
+
+  // Scripts
   script( src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js' )
+  script( src='//maps.googleapis.com/maps/api/js?key=AIzaSyBAv9D3K6sg_qivhqaeBvoL2wAGapLCCVM&sensor=false' )
   script( src='public/js/app.js' )
+
