@@ -207,10 +207,25 @@ describe('Echonest', function() {
             "code" : -1,
             "message" : "Success"
           }}};
-      api.reply( 200, response );
-      var promise = echonest.readProfileDataAsync( catalog_id );
-      expect( promise).to.eventually.be.rejected.and.notify(done);
+      api.reply(200, response);
+      var promise = echonest.readProfileDataAsync(catalog_id);
+      expect(promise).to.eventually.be.rejected.and.notify(done);
     });
-    it('should make additional calls if all items aren\'t returned' );
+    it('should make additional calls if all items aren\'t returned');
+  });
+  describe('deleting a catalog', function() {
+    var api;
+    before(function() {
+      api = nock(config.ECHONEST_API_URL)
+        .filteringRequestBody(/api_key=[A-Z\d]*&id=[A-Z\d]*/gi, 'api_key=TEST&id=catalog123')
+        .post('/api/v4/tasteprofile/delete', 'api_key=TEST&id=catalog123');
+    });
+    it('should return an error if the catalog id is invalid', function( done ) {
+      api.reply(200, { response : { status : { version : '4.2',
+        code : 5,
+        message : 'id - Invalid parameter: id must be an Echo Nest id or foreign id' } } });
+      var promise = echonest.deleteCatalogAsync('badcatalog');
+      expect(promise).to.eventually.be.rejected.and.notify(done);
+    });
   });
 });

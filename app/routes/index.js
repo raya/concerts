@@ -38,6 +38,7 @@ module.exports = function( app, passport ) {
     })
       .then( function( results ) {
         console.log( 'results from echonest:', results );
+        echonest.deleteCatalogAsync( req.session.catalog_id );
 
       });
   });

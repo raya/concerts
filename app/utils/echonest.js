@@ -66,6 +66,34 @@ exports.createCatalogDataFile = function( artists ) {
 };
 
 /*
+ Delete a catalog
+ */
+exports.deleteCatalog = function( catalog_id, callback ) {
+  var url = config.ECHONEST_API_URL + 'tasteprofile/delete',
+      form = {
+        api_key : config.ECHONEST_API_KEY,
+        id : catalog_id
+      };
+
+  request.post({
+    url : url,
+    headers : {'content-type' : 'application/x-www-form-urlencoded'},
+    json : true,
+    form : form
+  }, function( err, r, body ) {
+    if ( err ) {
+      return callback(err);
+    }
+    var ticket_status = body.response.status.code;
+    if ( ticket_status !== RESPONSE_CODES.VALID ) {
+      return callback(body);
+    } else {
+      return callback(null, true);
+    }
+  });
+};
+
+/*
  Checks the status of a catalog update
  */
 exports.getStatus = function( ticket_id, callback ) {
@@ -138,7 +166,7 @@ exports.readProfileData = function( catalog_id, callback ) {
       return callback(e);
     }
     if ( result.response.status.code !== RESPONSE_CODES.VALID ) {
-      return callback( body );
+      return callback(body);
     }
     var items = formatProfileData(result.response.catalog.items);
     return callback(null, items);
