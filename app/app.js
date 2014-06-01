@@ -11,7 +11,6 @@ var config = require('./config/config'),
 
 var app = express();
 
-//var APP_PORT = process.env.PORT || 5000;
 if ( app.get('env') == 'test' ) {
   APP_PORT = 5001;
 } else {
@@ -21,7 +20,6 @@ if ( app.get('env') == 'test' ) {
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-app.use(express.logger());
 app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.session({
@@ -36,7 +34,6 @@ app.use(express.session({
   }));
 
 app.use(express.errorHandler());
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
