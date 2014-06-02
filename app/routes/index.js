@@ -1,8 +1,10 @@
 var Promise = require('bluebird'),
-    queue = require( '../utils/queue' );
+    queue = require('../utils/queue');
 
 var echonest = Promise.promisifyAll(require('../utils/echonest')),
-    rdio = Promise.promisifyAll(require('../utils/rdio'));;
+    rdio = Promise.promisifyAll(require('../utils/rdio')),
+    songkick = Promise.promisifyAll(require('../utils/songkick'));
+
 module.exports = function( app, passport ) {
   app.get('/', function( req, res, next ) {
     res.render('home');
@@ -43,6 +45,16 @@ module.exports = function( app, passport ) {
       });
   });
 
+  app.get('/events', function( req, res ) {
+    console.log('user coordinates:', req.query.user_coordinates );
+    songkick.getMetroIdsAsync( req.query.user_coordinates )
+      .then( function( metro_ids ) {
+        console.log('returned metro ids:', metro_ids );
+      });
+  });
+
+
+  // Pages
   app.get('/concerts', function( req, res ) {
     if ( !req.user ) {
       return res.redirect('/');

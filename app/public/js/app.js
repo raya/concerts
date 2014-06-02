@@ -6,6 +6,7 @@
 
   var artists,
       geocoder,
+      geoIp = {},
       jqueryMap = {
         $errorField : $( '.error-msg').eq(0),
         mapElem : $( '#map-canvas')[0]
@@ -31,6 +32,7 @@
 
     if ( "geolocation" in navigator ) {
       navigator.geolocation.getCurrentPosition(function( position ) {
+        setGeoIp( position.coords.latitude, position.coords.longitude );
         initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         map.setCenter(initialLocation);
 
@@ -44,11 +46,23 @@
     }
   }
 
+  // Save lat/long coordinates
+  function setGeoIp( lat, long ) {
+    geoIp.lat = lat;
+    geoIp.long = long;
+  }
+
   // Create new map with geocoded location
   function geocodeMap( address ) {
     geocoder = geocoder || new google.maps.Geocoder();
     geocoder.geocode({ 'address' : address}, function( results, status ) {
       if ( status == google.maps.GeocoderStatus.OK ) {
+        // save results
+        var latitude = results[0].geometry.location.lat();
+        var longitude = results[0].geometry.location.lng();
+        setGeoIp( latitude, longitude );
+
+        // change map
         map.setCenter(results[0].geometry.location);
         markerOptions.map = map;
         markerOptions.center = results[0].geometry.location;
@@ -69,6 +83,19 @@
     if ( validateForm(address) ) {
       geocodeMap(address);
     }
+  }
+
+  // Get list of songkick metro ids
+  function onNextPage( event ) {
+    event.preventDefault();
+    $.ajax({
+      url : '/events',
+      data : {
+        user_coordinates : geoIp
+      }
+    }).done( function( concerts ) {
+      console.log('concerts received');
+    });
   }
 
   // Validate city input form and display error messages
@@ -100,6 +127,7 @@
 
   // Event Handlers
   $('form.location').on('submit', onChangeCity);
+  $('form.next-section').on('submit', onNextPage);
 
   // Initialize the page
   init();

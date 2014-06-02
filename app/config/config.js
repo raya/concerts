@@ -20,5 +20,7 @@ config.RDIO_CALLBACK_URL = 'http://127.0.0.1:5000/users/authorize/rdio/callback'
 config.RDIO_CLIENT_ID = process.env.RDIO_CLIENT_ID;
 config.RDIO_CLIENT_SECRET = process.env.RDIO_CLIENT_SECRET;
 config.RDIO_TOKEN_URL = 'https://www.rdio.com/oauth2/token';
+config.SONGKICK_API_KEY   = process.env.SONGKICK_API_KEY;
+config.SONGKICK_API_URL   = 'http://api.songkick.com/api/3.0/';
 
 module.exports = config;
