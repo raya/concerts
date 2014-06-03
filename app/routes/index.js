@@ -1,14 +1,12 @@
 var Promise = require('bluebird'),
-    queue = require('../utils/queue');
+    queue = require('../utils/queue'),
+    _ = require('lodash');
 
 var echonest = Promise.promisifyAll(require('../utils/echonest')),
     rdio = Promise.promisifyAll(require('../utils/rdio')),
     songkick = Promise.promisifyAll(require('../utils/songkick'));
 
 module.exports = function( app, passport ) {
-  app.get('/', function( req, res, next ) {
-    res.render('home');
-  });
 
   app.post('/users/authorize', passport.authenticate('oauth2'));
 
@@ -17,10 +15,6 @@ module.exports = function( app, passport ) {
       successRedirect : '/concerts',
       session : true }));
 
-  /*
-   1 - Get list of user's artists from Rdio & create a profile on Echonest
-   2 - Create a file of artists to send to Echonest
-   */
   app.get('/users/new', function( req, res ) {
     Promise.all([
       rdio.getArtistsAsync(req.session.passport.user.accessToken),
@@ -41,20 +35,28 @@ module.exports = function( app, passport ) {
       .then( function( results ) {
         console.log( 'results from echonest:', results );
         echonest.deleteCatalogAsync( req.session.catalog_id );
-
       });
   });
 
   app.get('/events', function( req, res ) {
-    console.log('user coordinates:', req.query.user_coordinates );
     songkick.getMetroIdsAsync( req.query.user_coordinates )
       .then( function( metro_ids ) {
-        console.log('returned metro ids:', metro_ids );
+        return Promise.map( metro_ids, function( metro_id ) {
+          return songkick.getConcerts(metro_id);
+        });
+      })
+      .then( function( results ) {
+        req.session.concerts = _.flatten( results, true );
+        req.session.save();
+        console.log('final result from songkick in route', req.session.concerts );
       });
   });
 
+  // ---Pages
+  app.get('/', function( req, res, next ) {
+    res.render('home');
+  });
 
-  // Pages
   app.get('/concerts', function( req, res ) {
     if ( !req.user ) {
       return res.redirect('/');

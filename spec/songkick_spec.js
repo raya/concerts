@@ -65,7 +65,70 @@ describe('Songkick', function() {
       expect(promise).to.eventually.eql([26330, 28529]).and.notify(done);
     });
 
-
   });
 
+  describe('Getting concerts', function() {
+    var api,
+        metro_id = '5290',
+        results = { resultsPage : { status : 'ok',
+          results : { event : [
+            { type : 'Concert',
+              displayName : 'Radiohead',
+              venue : { metroArea : [],
+                displayName : 'The Club',
+                id : 12100 } },
+            { type : 'Concert',
+              displayName : 'Modest Mouse',
+              venue : { metroArea : [],
+                displayName : 'The Club',
+                id : 21200 } }
+          ]
+          },
+          perPage : 50,
+          page : 1,
+          totalEntries : 2 }},
+        url = '/api/3.0/metro_areas/' + metro_id + '/calendar.json?'
+          + '&apikey=' + config.SONGKICK_API_KEY
+          + '&min_date=2014-06-03' + '&max_date=2014-06-10';
+
+    before(function() {
+      api = nock(config.SONGKICK_API_URL)
+        .get(url);
+    });
+    it('should return a list of concerts', function( done ) {
+      api.reply(200, results);
+      var promise = songkick.getConcerts(metro_id);
+      expect(promise).to.eventually.eql(results.resultsPage.results.event)
+        .and.notify(done);
+    });
+    it('should get additional concerts if all events aren\'t included in initial response', function( done ) {
+      var extra_results = _.clone(results, true);
+      extra_results.resultsPage.totalEntries = 3;
+      extra_results.resultsPage.perPage = 2;
+
+      var page_two_results =
+          { resultsPage : { status : 'ok',
+            results : { event : [
+              { type : 'Concert',
+                displayName : 'The Eagles',
+                venue : { metroArea : [],
+                  displayName : 'The Club',
+                  id : 32100 } }
+            ]
+            },
+            perPage : 50,
+            page : 2,
+            totalEntries : 3 }};
+
+      api.reply(200, extra_results)
+        .get(url + '&page=2')
+        .reply(200, page_two_results);
+
+      var promise = songkick.getConcerts(metro_id);
+      expect(promise).to.eventually.have.length(3)
+        .and.to.deep.include.members( extra_results.resultsPage.results.event )
+        .and.to.deep.include.members( page_two_results.resultsPage.results.event )
+        .and.notify(done);
+    });
+  });
 });
