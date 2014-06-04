@@ -1,6 +1,8 @@
 extends ./layout
 
 block content
+  .overlay.hide
+  .spinner.duo
   section.pure-g.box
     .pure-u-1.box-header
       h1 Looking Around Here?
@@ -15,8 +17,11 @@ block content
         .error-msg
   section.pure-g.next-page
     button.pure-button.nextPageBtn( type="submit", name="nextPageBtn" ) next
+  section.pure-g.event-listings.box.hide
+
 
 // Scripts
 block scripts
   script( src='//maps.googleapis.com/maps/api/js?key=AIzaSyBAv9D3K6sg_qivhqaeBvoL2wAGapLCCVM&sensor=false' )
   script( src='public/js/app.js' )
+  script( src='public/js/templates.js' )

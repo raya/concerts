@@ -1,0 +1,13 @@
+.pure-u-1.box-header
+  h1 Event Listings
+.pure-u-1.box-body
+  -console.log('locals:', locals);
+  if (locals.concerts.length < 1)
+    h2 No Events Found
+  else
+    each concert in locals.concerts
+      .event
+        h3= concert.displayName
+        h4 Where: #{concert.location.city}
+        h4 Venue : #{ concert.venue.displayName}
+        h4 Time: #{ concert.start.time }

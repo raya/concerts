@@ -8,8 +8,11 @@
       geocoder,
       geoIp = {},
       jqueryMap = {
-        $errorField : $( '.error-msg').eq(0),
-        mapElem : $( '#map-canvas')[0]
+        $errorField : $('.error-msg').eq(0),
+        $mainBox : $('.box').eq(0),
+        mapElem : $('#map-canvas')[0],
+        $overlay : $('.overlay').eq(0),
+        $spinner : $('.spinner').eq(0)
       },
       map,
       mapOptions = {
@@ -24,7 +27,8 @@
         fillColor : '#FF0000',
         fillOpacity : 0.35,
         radius : 60000 //TODO - this is not accurate
-      };
+      },
+      spinner = $('.csspinner');
 
   // Initialize Google Maps
   function initializeMap() {
@@ -32,7 +36,7 @@
 
     if ( "geolocation" in navigator ) {
       navigator.geolocation.getCurrentPosition(function( position ) {
-        setGeoIp( position.coords.latitude, position.coords.longitude );
+        setGeoIp(position.coords.latitude, position.coords.longitude);
         initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         map.setCenter(initialLocation);
 
@@ -60,7 +64,7 @@
         // save results
         var latitude = results[0].geometry.location.lat();
         var longitude = results[0].geometry.location.lng();
-        setGeoIp( latitude, longitude );
+        setGeoIp(latitude, longitude);
 
         // change map
         map.setCenter(results[0].geometry.location);
@@ -76,6 +80,19 @@
     });
   }
 
+  function displayConcerts( concerts ) {
+    var $main = jqueryMap.$mainBox;
+
+    // update heading
+    $main.find('.box-header')
+      .empty()
+      .append('<h1>Events</h1>');
+
+    var $events = $('.event-listings').eq(0);
+    $events.removeClass('hide');
+    $events.append( templatizer.event_listings( { concerts: concerts }) );
+  }
+
   // Change map of displayed city
   function onChangeCity( event ) {
     event.preventDefault();
@@ -86,15 +103,20 @@
   }
 
   // Get list of songkick metro ids
-  function onNextPage( event ) {
-    event.preventDefault();
+  function onNextPage() {
+    jqueryMap.$spinner.toggleClass('csspinner');
+    jqueryMap.$overlay.toggleClass('hide');
+
     $.ajax({
       url : '/events',
       data : {
         user_coordinates : geoIp
       }
-    }).done( function( concerts ) {
-      console.log('concerts received', concerts );
+    }).done(function( concerts ) {
+      jqueryMap.$overlay.toggleClass('hide');
+      jqueryMap.$spinner.toggleClass('csspinner');
+      console.log('concerts received', concerts);
+      displayConcerts( concerts );
     });
   }
 
