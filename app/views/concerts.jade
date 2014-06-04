@@ -1,8 +1,6 @@
-html
-head
-  link( rel="stylesheet", type="text/css", href="/public/stylesheets/app.css" )
-  title Concerts
-body
+extends ./layout
+
+block content
   h1 What's Your Area?
   #map-canvas
   form.location( method="POST" )
@@ -13,8 +11,7 @@ body
   form.next-section
     button( type="submit" ) Next
 
-  // Scripts
-  script( src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js' )
+// Scripts
+block scripts
   script( src='//maps.googleapis.com/maps/api/js?key=AIzaSyBAv9D3K6sg_qivhqaeBvoL2wAGapLCCVM&sensor=false' )
   script( src='public/js/app.js' )
-

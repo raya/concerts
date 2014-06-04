@@ -1,6 +1,8 @@
-h1 Concerts
+extends ./layout
+block content
+  h1 Concerts
 
-p Authorize us on rdio
+  p Authorize us on rdio
 
-form( action="/users/authorize", method="POST" )
-  input( type="image", src="../public/images/rdio-logo.png", alt="rdio logo")
+  form( action="/users/authorize", method="POST" )
+    input( type="image", src="../public/images/rdio-logo.png", alt="rdio logo")
