@@ -94,7 +94,7 @@
         user_coordinates : geoIp
       }
     }).done( function( concerts ) {
-      console.log('concerts received');
+      console.log('concerts received', concerts );
     });
   }
 

@@ -1,4 +1,5 @@
-var Promise = require('bluebird'),
+var integration = require('../utils/integration'),
+    Promise = require('bluebird'),
     queue = require('../utils/queue'),
     _ = require('lodash');
 
@@ -33,7 +34,8 @@ module.exports = function( app, passport ) {
       return echonest.readProfileDataAsync(req.session.catalog_id);
     })
       .then( function( results ) {
-        console.log( 'results from echonest:', results );
+        req.session.artists = results;
+        req.session.save();
         echonest.deleteCatalogAsync( req.session.catalog_id );
       });
   });
@@ -48,7 +50,22 @@ module.exports = function( app, passport ) {
       .then( function( results ) {
         req.session.concerts = _.flatten( results, true );
         req.session.save();
-        console.log('final result from songkick in route', req.session.concerts );
+        req.session.reload( function( err ) {
+          if ( err ) {
+            console.log('error reloading session data');
+          }
+
+          if ( req.session.artists ) {
+            var matching_concerts = integration.filterConcertMatches( req.session.artists, req.session.concerts );
+            console.log('matching results:', matching_concerts );
+            res.json( matching_concerts );
+          } else {
+            //TODO  - create a job to keep checking
+            console.log('no echonest data yet');
+          }
+        });
+
+
       });
   });
 
