@@ -1,15 +1,20 @@
 extends ./layout
 
 block content
-  h1 What's Your Area?
-  #map-canvas
-  form.location( method="POST" )
-    label( for="city" ) City
-    input( type="text", name="city", id="city" )
-    button( type="submit", name="citySubmitBtn" ) Submit
-    .error-msg
-  form.next-section
-    button( type="submit" ) Next
+  section.pure-g.box
+    .pure-u-1.box-header
+      h1 Looking Around Here?
+    .pure-u-1.box-body
+      #map-canvas
+      form.pure-form.location( method="post" )
+        fieldset
+          legend Wrong area? Enter your city below.
+          label( for="city" )
+            input( type="text", placeholder="city name", name="city", id="city" )
+          button.pure-button.pure-button-primary( type="submit", name="citysubmitbtn" ) submit
+        .error-msg
+  section.pure-g.next-page
+    button.pure-button.nextPageBtn( type="submit", name="nextPageBtn" ) next
 
 // Scripts
 block scripts

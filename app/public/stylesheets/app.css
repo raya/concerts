@@ -1,15 +1,41 @@
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  background-color : black;
+}
+
 #map-canvas {
-    width: 50%;
-    height: 300px;
-    background-color: blue;
+  height           : 300px;
+  background-color : blue;
 }
 
-form.location {
-    display: inline;
+.box {
+  margin: 10% 10% 0 10%;
 }
 
-.next-section > button {
-    background-color : green;
-    height : 50px;
-    width: 100px;
+.box-header {
+  background-color : #FFBA03;
+  text-align:center;
+}
+
+.box-body {
+  background-color : white;
+}
+
+.location {
+  margin-bottom: 5%;
+  padding: 2%;
+}
+
+.next-page {
+  margin: 0 10% 0 10%;
+  background-color: white;
+  justify-content: flex-end;
+}
+
+.nextPageBtn {
+  background-color: #FFBA03;
+
 }

@@ -127,7 +127,7 @@
 
   // Event Handlers
   $('form.location').on('submit', onChangeCity);
-  $('form.next-section').on('submit', onNextPage);
+  $('button[name="nextPageBtn"]').on('click', onNextPage);
 
   // Initialize the page
   init();
