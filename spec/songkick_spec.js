@@ -69,6 +69,7 @@ describe('Songkick', function() {
 
   describe('Getting concerts', function() {
     var api,
+        end_date = '2014-06-10',
         metro_id = '5290',
         results = { resultsPage : { status : 'ok',
           results : { event : [
@@ -82,22 +83,23 @@ describe('Songkick', function() {
               venue : { metroArea : [],
                 displayName : 'The Club',
                 id : 21200 } }
-          ]
-          },
+          ]},
           perPage : 50,
           page : 1,
           totalEntries : 2 }},
-        url = '/api/3.0/metro_areas/' + metro_id + '/calendar.json?'
-          + '&apikey=' + config.SONGKICK_API_KEY
-          + '&min_date=2014-06-03' + '&max_date=2014-06-10';
+        start_date = '2014-06-03';
 
     before(function() {
+      url = '/api/3.0/metro_areas/' + metro_id + '/calendar.json?'
+        + '&apikey=' + config.SONGKICK_API_KEY
+        + '&min_date=' + start_date + '&max_date=' + end_date;
+
       api = nock(config.SONGKICK_API_URL)
         .get(url);
     });
     it('should return a list of concerts', function( done ) {
       api.reply(200, results);
-      var promise = songkick.getConcerts(metro_id);
+      var promise = songkick.getConcerts(metro_id, start_date, end_date);
       expect(promise).to.eventually.eql(results.resultsPage.results.event)
         .and.notify(done);
     });
@@ -124,10 +126,10 @@ describe('Songkick', function() {
         .get(url + '&page=2')
         .reply(200, page_two_results);
 
-      var promise = songkick.getConcerts(metro_id);
+      var promise = songkick.getConcerts(metro_id, start_date, end_date);
       expect(promise).to.eventually.have.length(3)
-        .and.to.deep.include.members( extra_results.resultsPage.results.event )
-        .and.to.deep.include.members( page_two_results.resultsPage.results.event )
+        .and.to.deep.include.members(extra_results.resultsPage.results.event)
+        .and.to.deep.include.members(page_two_results.resultsPage.results.event)
         .and.notify(done);
     });
   });
