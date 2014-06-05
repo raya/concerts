@@ -34,7 +34,8 @@ describe('integration', function() {
                 id : 102,
                 displayName : 'Artist 3' }
             }
-          ]}];
+          ]}
+      ];
     });
     it('should return matchees', function() {
       var matches = integration.filterConcertMatches(artist_ids, concerts);
@@ -47,8 +48,13 @@ describe('integration', function() {
         '500' : 'Artist 500',
         '501' : 'Artist 501'
       };
-      var matches = integration.filterConcertMatches(no_match_artist_ids, concerts );
-      expect( matches).to.be.empty;
+      var matches = integration.filterConcertMatches(no_match_artist_ids, concerts);
+      expect(matches).to.be.empty;
+    });
+    it('should save a user\'s followed artist to users_artist', function() {
+      var matches = integration.filterConcertMatches(artist_ids, concerts);
+      expect(matches[0].users_artist).to.equal('Artist 1');
+      expect(matches[1].users_artist).to.equal('Artist 3');
     });
   });
 
