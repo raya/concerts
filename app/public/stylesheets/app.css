@@ -36,23 +36,36 @@ body {
   padding : 2%;
 }
 
+.event {
+  -o-transition:.5s;
+  -ms-transition:.5s;
+  -moz-transition:.5s;
+  -webkit-transition:.5s;
+  transition:.5s;
+}
+
+.event-listings.box-body > .event:hover {
+  background-color : #1c1d21;
+  color            : #6e6e6e;
+}
+
 .event-date-box,
 .event-info-box {
-  display:table-cell;
-  height:100%;
-  vertical-align: top;
+  display        : table-cell;
+  height         : 100%;
+  vertical-align : top;
 }
 
 .event-date-box {
-  width: 40%;
+  width : 40%;
 }
 
 .event-info-box {
-  width: 60%;
+  width : 60%;
 }
 
 .event-info-box > h3 {
-  margin: 0;
+  margin : 0;
 }
 
 .event-date {
