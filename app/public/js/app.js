@@ -89,8 +89,9 @@
       .append('<h1>Events</h1>');
 
     var $events = $('.event-listings').eq(0);
-    $events.removeClass('hide');
-    $events.append( templatizer.event_listings( { concerts: concerts }) );
+    $events.removeClass('hide')
+      .empty()
+      .append(templatizer.event_listings({ concerts : concerts }));
   }
 
   // Change map of displayed city
@@ -116,15 +117,17 @@
       jqueryMap.$overlay.toggleClass('hide');
       jqueryMap.$spinner.toggleClass('csspinner');
       console.log('concerts received', concerts);
-      formatConcerts( concerts );
-      displayConcerts( concerts );
+      formatConcerts(concerts);
+      displayConcerts(concerts);
     });
   }
 
   function formatConcerts( concerts ) {
-    var i;
+    var i, origTime;
     for ( i = 0; i < concerts.length; i++ ) {
-      concerts[i].formatted_start_date = moment( concerts[i].start.date ).format('MMM DD');
+      concerts[i].formatted_start_date = moment(concerts[i].start.date).format('MMM DD');
+      origTime = moment(concerts[i].start.time, 'HH');
+      concerts[i].start.time = origTime.format('hh:mmA');
     }
     return concerts;
   }

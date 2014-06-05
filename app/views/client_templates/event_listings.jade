@@ -12,8 +12,14 @@
             .event-date= concert.formatted_start_date
           .event-info-box
             h3= concert.users_artist
-            h4 Where: #{concert.location.city}
-            h4 Venue : #{ concert.venue.displayName}
-            h4 Time: #{ concert.start.time }
+            h4 Where:
+              = ' '
+              span.minor= concert.location.city
+            h4 Venue:
+              = ' '
+              span.minor= concert.venue.displayName
+            h4 Time:
+              = ' '
+              span.minor= concert.start.time
             a( href="#{ concert.uri }", alt="Concert information", target="_blank" )
               h4 More Info
