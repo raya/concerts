@@ -1,13 +1,16 @@
 .pure-u-1.box-header
   h1 Event Listings
-.pure-u-1.box-body
-  -console.log('locals:', locals);
+
+.event-listings.box-body
   if (locals.concerts.length < 1)
     h2 No Events Found
   else
     each concert in locals.concerts
-      .event
-        h3= concert.displayName
-        h4 Where: #{concert.location.city}
-        h4 Venue : #{ concert.venue.displayName}
-        h4 Time: #{ concert.start.time }
+      .pure-u-1.pure-u-md-1-2.pure-u-lg-1-3.event
+        .event-date-box
+          .event-date= concert.formatted_start_date
+        .event-info-box
+          h3= concert.users_artist
+          h4 Where: #{concert.location.city}
+          h4 Venue : #{ concert.venue.displayName}
+          h4 Time: #{ concert.start.time }

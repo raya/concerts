@@ -116,8 +116,17 @@
       jqueryMap.$overlay.toggleClass('hide');
       jqueryMap.$spinner.toggleClass('csspinner');
       console.log('concerts received', concerts);
+      formatConcerts( concerts );
       displayConcerts( concerts );
     });
+  }
+
+  function formatConcerts( concerts ) {
+    var i;
+    for ( i = 0; i < concerts.length; i++ ) {
+      concerts[i].formatted_start_date = moment( concerts[i].start.date ).format('MMM DD');
+    }
+    return concerts;
   }
 
   // Validate city input form and display error messages
