@@ -19,6 +19,7 @@
     "tests"
   ],
   "dependencies": {
-    "momentjs": "~2.6.0"
+    "momentjs": "~2.6.0",
+    "pure": "~0.5.0"
   }
 }

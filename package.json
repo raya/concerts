@@ -20,14 +20,17 @@
     "chai" : "1.9.x",
     "chai-as-promised": "4.1.x",
     "chai-passport-strategy": "0.2.x",
-    "grunt" : "0.4.x",
+    "grunt" : "0.4.5",
+    "grunt-contrib-concat":"0.4.x",
+    "grunt-contrib-watch" : "0.6.x",
+    "grunt-contrib-cssmin" : "0.9.x",
     "grunt-mocha-test" : "0.10.x",
+    "grunt-sass" : "0.12.1",
     "mocha" : "1.18.x",
     "mock-kue" : "0.0.7",
     "nock": "0.31.x",
     "parseUri" : "1.2.3-2",
     "supertest" : "0.12.x",
     "webdriverjs" : "1.7.x"
-
   }
 }
