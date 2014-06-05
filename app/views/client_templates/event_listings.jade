@@ -14,3 +14,5 @@
           h4 Where: #{concert.location.city}
           h4 Venue : #{ concert.venue.displayName}
           h4 Time: #{ concert.start.time }
+          a( href="#{ concert.uri }", alt="Concert information", target="_blank" )
+            h4 More Info

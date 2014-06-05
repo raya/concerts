@@ -40,6 +40,7 @@ body {
 .event-info-box {
   display:table-cell;
   height:100%;
+  vertical-align: top;
 }
 
 .event-date-box {
