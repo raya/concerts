@@ -11,6 +11,7 @@ module.exports = function( grunt ) {
         files: {
           'app/public/stylesheets/app.min.css': ['bower_components/pure/pure-min.css',
             'bower_components/pure/grids-responsive-min.css',
+            'app/views/styles/css_spinner.css',
             'build/app.css' ]
         }
       }
