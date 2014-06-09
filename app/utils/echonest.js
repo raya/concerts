@@ -174,6 +174,23 @@ exports.readProfileData = function( catalog_id, callback ) {
   });
 };
 
+// TODO - add maximum number of tries
+// Repeatedly reload the request object to see if req.artists has been set
+exports.pollData = function( req, callback ) {
+  var timer = setInterval(function() {
+    req.session.reload(function( err ) {
+      if ( err ) {
+        console.log('error reloading session data');
+      }
+
+      if ( req.session.artists ) {
+        clearInterval(timer);
+        return callback(null, true);
+      }
+    });
+  }, 2000);
+};
+
 /* Format catalog data from echonest
  * Remove the foreign_id : songkick:artist:ID_NUM from items and
  * returns them in a hash:

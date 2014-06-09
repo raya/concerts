@@ -27,49 +27,47 @@ module.exports = function( app, passport ) {
       var catalog_file = echonest.createCatalogDataFile(artists);
       return echonest.sendFileAsync(catalog_file, catalog_id);
     }).then(function( ticket_id ) {
-      return new Promise( function( resolve, reject ) {
-        queue.addPollingJob( ticket_id, resolve );
+      return new Promise(function( resolve, reject ) {
+        queue.addPollingJob(ticket_id, resolve);
       });
-    }).then( function() {
+    }).then(function() {
       return echonest.readProfileDataAsync(req.session.catalog_id);
     })
-      .then( function( results ) {
-        req.session.artists = results;
-        req.session.save();
-        echonest.deleteCatalogAsync( req.session.catalog_id );
+      .then(function( results ) {
+        req.session.reload(function() {
+          req.session.artists = results;
+          req.session.save();
+          console.log("Echonest artist data has been saved");
+          echonest.deleteCatalogAsync(req.session.catalog_id);
+        });
       });
   });
 
   app.get('/events', function( req, res ) {
-    songkick.getMetroIdsAsync( req.query.user_coordinates )
-      .then( function( metro_ids ) {
-        return Promise.map( metro_ids, function( metro_id ) {
+    songkick.getMetroIdsAsync(req.query.user_coordinates)
+      .then(function( metro_ids ) {
+        return Promise.map(metro_ids, function( metro_id ) {
           return songkick.getConcerts(metro_id);
         });
       })
-      .then( function( results ) {
-        req.session.concerts = _.flatten( results, true );
-        req.session.save();
-        req.session.reload( function( err ) {
-          if ( err ) {
-            console.log('error reloading session data');
-          }
-
-          if ( req.session.artists ) {
-            var matching_concerts = integration.filterConcertMatches( req.session.artists, req.session.concerts );
-            console.log('matching results:', matching_concerts );
-            res.json( matching_concerts );
-          } else {
-            //TODO  - create a job to keep checking
-            console.log('no echonest data yet');
-          }
+      .then(function( results ) {
+        req.session.reload(function() {
+          req.session.concerts = _.flatten(results, true);
+          req.session.save();
+          console.log('songkick concert data has been saved');
         });
-
-
+      })
+      .then(function() {
+        return echonest.pollDataAsync(req);
+      })
+      .then(function() {
+        var matching_concerts = integration.filterConcertMatches(req.session.artists, req.session.concerts);
+        console.log('sending back Concert-Artist Matches.');
+        res.json(matching_concerts);
       });
   });
 
-  // ---Pages
+// ---Pages
   app.get('/', function( req, res, next ) {
     res.render('home');
   });
@@ -80,6 +78,4 @@ module.exports = function( app, passport ) {
     }
     res.render('concerts');
   });
-
-
 };
