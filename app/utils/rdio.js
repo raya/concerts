@@ -1,4 +1,5 @@
 var config = require('../config/config'),
+    logger = require('./logger'),
     Promise = require('bluebird'),
     qs = require('querystring'),
     request = require('request');
@@ -16,6 +17,8 @@ exports.getArtists = function( access_token, callback ) {
     json : true
   }, function( err, r, body ) {
     if ( err || body.error ) {
+      logger.log('Error retrieving Rdio artist list: %j', err );
+      logger.log('Body: %j', body );
       return callback('error');
     }
     var rdio_ids = formatArtistData(body.result);

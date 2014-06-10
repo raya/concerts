@@ -1,5 +1,5 @@
 var config = require('../config/config'),
-    Promise = require('bluebird'),
+    logger = require('./logger'),
     request = require('request'),
     _ = require('lodash');
 
@@ -26,11 +26,14 @@ exports.createCatalogProfile = function( callback ) {
     form : form
   }, function( err, r, body ) {
     if ( err ) {
+      logger.log('error', 'Error creating catalog profile: %j', err);
       return callback(err);
     }
     try {
       var result = JSON.parse(body);
     } catch ( e ) {
+      logger.log('error', 'Error parsing JSON for catalog profile: %j', err);
+      logger.log('error', 'Body: %j', body);
       return callback(body);
     }
 
@@ -82,6 +85,7 @@ exports.deleteCatalog = function( catalog_id, callback ) {
     form : form
   }, function( err, r, body ) {
     if ( err ) {
+      logger.log('error', 'Error deleting catalog profile: %j', err);
       return callback(err);
     }
     var ticket_status = body.response.status.code;
@@ -103,10 +107,16 @@ exports.getStatus = function( ticket_id, callback ) {
   request.get({
     url : url
   }, function( err, r, body ) {
+    if ( err ) {
+      logger.log('error', 'Error getting catalog update status: %j', err);
+      return callback(err);
+    }
     var result;
     try {
       result = JSON.parse(body);
     } catch ( e ) {
+      logger.log('error', 'Error parsing JSON while retrieving catalog status: %j', err);
+      logger.log('error', 'Body: %j', body);
       return callback(body);
     }
     var ticket_status = result.response.ticket_status;
@@ -137,9 +147,16 @@ exports.sendFile = function( catalog_file, catalog_id, callback ) {
     headers : {'content-type' : 'application/x-www-form-urlencoded'},
     form : form
   }, function( err, r, body ) {
+    if ( err ) {
+      logger.log('error', 'Error sending Echonest artist data file: %j', err);
+      logger.log('error', 'Body: %j', body);
+      return callback(err);
+    }
     try {
       var result = JSON.parse(body);
     } catch ( e ) {
+      logger.log('error', 'Error parsing JSON while sending artist data file: %j', err);
+      logger.log('error', 'Body: %j', body);
       return callback(body);
     }
 
@@ -159,6 +176,11 @@ exports.readProfileData = function( catalog_id, callback ) {
   request.get({
     url : url
   }, function( err, r, body ) {
+    if ( err ) {
+      logger.log('error', 'Error reading Echonest profile data: %j', err);
+      logger.log('error', 'Body: %j', body);
+      return callback(err);
+    }
     var result;
     try {
       result = JSON.parse(body);
@@ -180,7 +202,7 @@ exports.pollData = function( req, callback ) {
   var timer = setInterval(function() {
     req.session.reload(function( err ) {
       if ( err ) {
-        console.log('error reloading session data');
+        logger.log('error', 'Error reloading session data while polling for echonest artists: %j', err );
       }
 
       if ( req.session.artists ) {

@@ -1,4 +1,5 @@
 var config = require('../config/config'),
+    logger = require('./logger'),
     moment = require('moment'),
     request = require('request'),
     Promise = require('bluebird'),
@@ -12,11 +13,15 @@ exports.getMetroIds = function( user_coordinates, callback ) {
     url : url
   }, function( err, r, body ) {
     if ( err ) {
+      logger.log('error', 'Error retrieving metro ids from Songkick: %j', err);
+      logger.log('error', 'Body: %j', body);
       return callback(err);
     }
     try {
       var results = JSON.parse(body);
     } catch ( e ) {
+      logger.log('error', 'Error parsing JSON for Songkick metro ids: %j', err);
+      logger.log('error', 'Body: %j', body);
       return callback(e);
     }
 
@@ -24,7 +29,6 @@ exports.getMetroIds = function( user_coordinates, callback ) {
       var valid_ids = getValidIds(results.resultsPage.results.location, user_coordinates);
       return callback(null, valid_ids);
     }
-
   });
 };
 
@@ -45,11 +49,15 @@ exports.getConcerts = function( metro_id, start_date, end_date ) {
       url : url
     }, function( err, r, body ) {
       if ( err ) {
+        logger.log('error', 'Error retrieving initial concert list from Songkick: %j', err);
+        logger.log('error', 'Body: %j', body);
         return reject(err);
       }
       try {
         var results = JSON.parse(body);
       } catch ( e ) {
+        logger.log('error', 'Error parsing JSON for getting initial Songkick concerts: %j', err);
+        logger.log('error', 'Body: %j', body);
         return reject(e);
       }
       if ( results.resultsPage.status !== 'ok' ) {
@@ -66,8 +74,8 @@ exports.getConcerts = function( metro_id, start_date, end_date ) {
         Promise.map(pages, function( page_number ) {
           return getMoreConcerts(url, page_number);
         }).then(function( more_concerts ) {
-          return resolve(_.chain( more_concerts )
-            .concat( results.resultsPage.results.event )
+          return resolve(_.chain(more_concerts)
+            .concat(results.resultsPage.results.event)
             .flatten()
             .value());
         });
@@ -91,25 +99,24 @@ function getMoreConcerts( base_url, page_number ) {
       url : url
     }, function( err, r, body ) {
       if ( err ) {
+        logger.log('error', 'Error retrieving additional concert list from Songkick: %j', err);
+        logger.log('error', 'Body: %j', body);
         return reject(err);
       }
-
       try {
         var results = JSON.parse(body);
       } catch ( e ) {
+        logger.log('error', 'Error parsing JSON for getting additional Songkick concerts: %j', err );
+        logger.log('error', 'Body: %j', body);
         return reject(e);
       }
-
       if ( results.resultsPage.status == 'ok' ) {
         return resolve(results.resultsPage.results.event);
       } else {
         return reject(results);
       }
-
     });
   });
-
-
 }
 
 // Create an array of ids with the following conditions:
