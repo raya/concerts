@@ -120,6 +120,7 @@ exports.getStatus = function( ticket_id, callback ) {
       return callback(body);
     }
     var ticket_status = result.response.ticket_status;
+    logger.log('info', 'Ticket received from Echonest for ticket_id %s, status: %s', ticket_id, ticket_status );
     if ( ticket_status === 'complete' ) {
       return callback(null, true);
     } else if ( ticket_status == 'pending' ) {

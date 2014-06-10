@@ -1,8 +1,20 @@
-var logger = require('winston');
+var winston = require('winston');
 
-logger.add( logger.transports.File,
-  { filename : __dirname + '/../../logs/concerts.log'});
-//logger.remove(logger.transports.Console);
+var colors = {
+  'debug' : 'blue',
+  'info' : 'green',
+  'error' : 'red'
+};
 
+var logger = module.exports = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      colorize: true
+    }),
+    new (winston.transports.File)({
+      filename : __dirname + '/../../logs/concerts.log'
+    })
+  ],
+  colors: colors
+});
 module.exports = logger;
-
