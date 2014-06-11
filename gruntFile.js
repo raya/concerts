@@ -1,11 +1,18 @@
 module.exports = function( grunt ) {
 
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-sass');
 
   grunt.initConfig({
+    copy: {
+      main: {
+        src: 'bower_components/momentjs/min/moment.min.js',
+        dest: 'app/public/js/'
+      }
+    },
     cssmin: {
       combine: {
         files: {
@@ -54,7 +61,7 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.registerTask('build:dev', 'sass:dist', 'cssmin:combine');
+  grunt.registerTask('build:dev', [ 'sass:dist', 'cssmin:combine', 'copy:main']);
   grunt.registerTask('test', 'mochaTest:test');
   grunt.registerTask('test:client', 'mochaTest:integration');
 

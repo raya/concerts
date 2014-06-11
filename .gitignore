@@ -3,5 +3,8 @@ build
 logs
 node_modules
 app/public/stylesheets/app.min.css
+app/public/js/moment.min.js
+app/public/js/templates.js
+
 .idea
 TODO.md
