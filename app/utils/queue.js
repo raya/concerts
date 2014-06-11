@@ -21,10 +21,10 @@ var jobs = kue.createQueue({
   disableSearch : true
 });
 
-var DELAY_INTERVAL = 3000, //check delayed jobs every 3 seconds
-    DELAY_TIME = 2000,     //delay added jobs by 2 seconds
+var DELAY_INTERVAL = 2000, //check delayed jobs every 2 seconds
+    DELAY_TIME = 3000,     //delay added jobs by 3 seconds
     MAX_ACTIVE_JOBS = 1,   //Max # of jobs to process at once
-    MAX_ATTEMPTS = 20;     //Max # of tries to process job until marking it as failed
+    MAX_ATTEMPTS = 5;     //Max # of tries to process job until marking it as failed
 
 // Check for delayed jobs and promote if delay time is over
 jobs.promote(DELAY_INTERVAL);
@@ -33,20 +33,17 @@ jobs.promote(DELAY_INTERVAL);
  Process the catalog_update job.
  */
 jobs.process('catalog_update', MAX_ACTIVE_JOBS, function( job, done ) {
-  echonest.getStatusAsync(job.data.ticket_id, function( err ) {
-    if ( err ) {
-      logger.log('error', 'Error getting Echonest catalog status: %j', err);
-      done(err);
-    } else {
-      job.remove(function( err ) {
-        if ( err ) {
-          logger.log('error', 'Error removing catalog_update job: %j', err);
-          throw err;
-        }
-        done(null, true);
-      });
-    }
-  });
+  //Wait 4 seconds between job attempts
+  setTimeout( function() {
+    echonest.getStatusAsync(job.data.ticket_id, function( err ) {
+      if ( err ) {
+        logger.log('error', 'Error getting Echonest catalog status: %j', err);
+        done(err);
+      } else {
+        done();
+      }
+    });
+  }, 4000 );
 });
 
 /*
@@ -61,10 +58,13 @@ exports.addPollingJob = function( ticket_id, callback ) {
 
   job.on('complete', function() {
     logger.log('info', 'catalog_update job successful for job ticket id: %s', job.data.ticket_id);
-    callback(null, job.data.catalog_id);
-  }).on('failed', function( err ) {
-    logger.log('error', 'catalog_update job failed: %j', err);
-    callback(err)
+    job.remove(function() {
+      logger.log('info', 'Removed successful catalog_update job');
+      return callback(null, job.data.catalog_id);
+    });
+  }).on('failed', function(err) {
+    logger.log('error', 'catalog_update job failed: %s', ticket_id);
+    return callback(err)
   });
 
   job.save();
