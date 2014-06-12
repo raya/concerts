@@ -1,13 +1,23 @@
 module.exports = function( grunt ) {
 
+  grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-env');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-sass');
 
   grunt.initConfig({
+    concurrent: {
+      dev: {
+        tasks: ['nodemon:dev', 'watch'],
+        options: {
+          logConcurrentOutput: true
+        }
+      }
+    },
     copy: {
       main: {
         src: 'bower_components/momentjs/min/moment.min.js',
@@ -25,10 +35,6 @@ module.exports = function( grunt ) {
       }
     },
     env : {
-      dev : {
-        NODE_ENV : 'development',
-        PORT : 5000
-      },
       test : {
         NODE_ENV : 'test',
         PORT : 5001
@@ -51,6 +57,16 @@ module.exports = function( grunt ) {
         src : ['spec/integration/*.js']
       }
     },
+    nodemon: {
+      dev: {
+        script: 'app/app.js',
+        env: {
+          NODE_ENV : 'development',
+          PORT: '5001'
+        },
+        ignore : [ '*.log', 'logs/concerts.log', '*.md' ]
+      }
+    },
     sass: {
       dist: {
         options: {
@@ -63,8 +79,8 @@ module.exports = function( grunt ) {
     },
     watch: {
       styles: {
-        files: ['app/views/styles/*.scss'],
-        tasks: ['sass:dist','cssmin:combine'],
+        files: ['app/views/styles/*'],
+        tasks: ['sass:dist','cssmin:combine', 'copy:main' ],
         options: {
           spawn: false
         }
@@ -72,8 +88,7 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.registerTask('build:dev', [ 'sass:dist', 'cssmin:combine', 'copy:main']);
+  grunt.registerTask('start:dev', ['concurrent:dev']);
   grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
-
 };
