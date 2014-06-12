@@ -1,8 +1,5 @@
 var config = {};
 
-config.development_port = 5000;
-config.TEST_PORT = 5001;
-
 // Kue
 config.KUE_PORT = 4003;
 // Redis

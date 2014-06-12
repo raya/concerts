@@ -9,13 +9,8 @@ var config = require('./config/config'),
     passport = require('passport'),
     RedisStore = require('connect-redis')(express);
 
-var app = express();
-
-if ( app.get('env') == 'test' ) {
-  APP_PORT = 5001;
-} else {
-  APP_PORT = 5000;
-}
+var app = express(),
+    port = Number(process.env.PORT || 5000);
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -52,8 +47,8 @@ require('./routes/index')(app, passport);
 
 app.use('/public', express.static(__dirname + '/public'));
 
-http.createServer(app).listen(APP_PORT, function() {
-  console.log('Server listening on port', APP_PORT);
+http.createServer(app).listen(port, function() {
+  console.log('Server listening on port', port);
   console.log('Environment:', app.get('env'));
 });
 

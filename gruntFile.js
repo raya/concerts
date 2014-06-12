@@ -3,6 +3,7 @@ module.exports = function( grunt ) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-env');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-sass');
 
@@ -21,6 +22,16 @@ module.exports = function( grunt ) {
             'app/views/styles/css_spinner.css',
             'build/app.css' ]
         }
+      }
+    },
+    env : {
+      dev : {
+        NODE_ENV : 'development',
+        PORT : 5000
+      },
+      test : {
+        NODE_ENV : 'test',
+        PORT : 5001
       }
     },
     mochaTest : {
@@ -62,7 +73,7 @@ module.exports = function( grunt ) {
   });
 
   grunt.registerTask('build:dev', [ 'sass:dist', 'cssmin:combine', 'copy:main']);
-  grunt.registerTask('test', 'mochaTest:test');
+  grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
 
 };
