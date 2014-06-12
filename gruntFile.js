@@ -38,6 +38,10 @@ module.exports = function( grunt ) {
       test : {
         NODE_ENV : 'test',
         PORT : 5001
+      },
+      dev : {
+        NODE_ENV : 'development',
+        PORT : 5000
       }
     },
     mochaTest : {
@@ -60,11 +64,7 @@ module.exports = function( grunt ) {
     nodemon: {
       dev: {
         script: 'app/app.js',
-        env: {
-          NODE_ENV : 'development',
-          PORT: '5001'
-        },
-        ignore : [ '*.log', 'logs/concerts.log', '*.md' ]
+        ignore : [ '*.log', 'logs/concerts.log', '*.md', 'node_modules/**' ]
       }
     },
     sass: {
@@ -88,7 +88,7 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.registerTask('start:dev', ['concurrent:dev']);
+  grunt.registerTask('start:dev', ['env:dev', 'concurrent:dev']);
   grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
 };

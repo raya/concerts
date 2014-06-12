@@ -17,4 +17,9 @@ var logger = module.exports = new (winston.Logger)({
   ],
   colors: colors
 });
+
+if ( process.env.NODE_ENV !== 'development' ) {
+  logger.remove( winston.transports.Console );
+}
+
 module.exports = logger;
