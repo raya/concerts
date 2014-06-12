@@ -33,10 +33,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
 
-// Build client side templates
-var templatizer = require('templatizer');
-templatizer(__dirname + '/views/client_templates', __dirname + '/public/js/templates.js');
-
 // Start Kue interface
 kue.app.listen( config.KUE_PORT );
 

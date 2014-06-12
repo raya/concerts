@@ -1,15 +1,9 @@
 module.exports = function( grunt ) {
 
-  grunt.loadNpmTasks('grunt-concurrent');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-env');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-sass');
+  require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
+    clean: ['build/*', 'app/public/js/app.min.js', 'app/public/stylesheets/app.min.css'],
     concurrent: {
       dev: {
         tasks: ['nodemon:dev', 'watch'],
@@ -19,11 +13,9 @@ module.exports = function( grunt ) {
       }
     },
     copy: {
-      main: {
+      css: {
         files :
           [
-            { src : 'bower_components/momentjs/min/moment.min.js',
-              dest : 'app/public/js/moment.min.js'},
             { src : 'build/app.min.css',
               dest : 'app/public/stylesheets/app.min.css'}
           ]
@@ -82,6 +74,37 @@ module.exports = function( grunt ) {
         }
       }
     },
+    shell: {
+      compileTemplates: {
+        command: './node_modules/templatizer/bin/cli -d app/views/client_templates -o build/templates.js'
+      }
+    },
+    uglify: {
+      prod: {
+        options : {
+          compress:true,
+          mangle: true
+        },
+        files: {
+          'app/public/js/app.min.js': [
+            'bower_components/momentjs/min/moment.min.js',
+            'build/templates.js',
+            'app/public/js/app.js' ]
+        }
+      },
+      dev: {
+        options : {
+          compress : false,
+          mangle : false
+        },
+        files : {
+          'app/public/js/app.min.js' : [
+            'bower_components/momentjs/min/moment.min.js',
+            'build/templates.js',
+            'app/public/js/app.js' ]
+        }
+      }
+    },
     watch: {
       styles: {
         files: ['app/views/styles/*'],
@@ -93,7 +116,9 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.registerTask('build', [ 'sass:dist', 'cssmin:combine', 'copy:main' ]);
+  grunt.registerTask('build:dev', [ 'clean', 'sass:dist', 'cssmin:combine', 'copy:css',
+    'shell:compileTemplates', 'uglify:dev' ]);
+  grunt.registerTask('build:prod', [ 'build:dev', 'uglify:prod']);
   grunt.registerTask('start:dev', ['env:dev', 'concurrent:dev']);
   grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
