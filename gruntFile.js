@@ -20,17 +20,22 @@ module.exports = function( grunt ) {
     },
     copy: {
       main: {
-        src: 'bower_components/momentjs/min/moment.min.js',
-        dest: 'app/public/js/'
+        files :
+          [
+            { src : 'bower_components/momentjs/min/moment.min.js',
+              dest : 'app/public/js/moment.min.js'},
+            { src : 'build/app.min.css',
+              dest : 'app/public/stylesheets/app.min.css'}
+          ]
       }
     },
     cssmin: {
       combine: {
         files: {
-          'app/public/stylesheets/app.min.css': ['bower_components/pure/pure-min.css',
+          'build/app.min.css': ['bower_components/pure/pure-min.css',
             'bower_components/pure/grids-responsive-min.css',
             'app/views/styles/css_spinner.css',
-            'build/app.css' ]
+            'build/app_sass.css' ]
         }
       }
     },
@@ -73,14 +78,14 @@ module.exports = function( grunt ) {
           outputStyle: 'nested'
         },
         files: {
-          'build/app.css' : 'app/views/styles/app.scss'
+          'build/app_sass.css' : 'app/views/styles/app.scss'
         }
       }
     },
     watch: {
       styles: {
         files: ['app/views/styles/*'],
-        tasks: ['sass:dist','cssmin:combine', 'copy:main' ],
+        tasks: 'build',
         options: {
           spawn: false
         }
@@ -88,6 +93,7 @@ module.exports = function( grunt ) {
     }
   });
 
+  grunt.registerTask('build', [ 'sass:dist', 'cssmin:combine', 'copy:main' ]);
   grunt.registerTask('start:dev', ['env:dev', 'concurrent:dev']);
   grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
