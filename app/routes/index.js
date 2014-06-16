@@ -44,7 +44,7 @@ module.exports = function( app, passport ) {
             queue.addPollingJob(ticket_id, resolve);
           });
         }).catch(function( err ) {
-          logger.log('error', 'Error polling for Echonest ticket id ', err );
+          logger.log('error', 'Error polling for Echonest ticket id ', err);
         })
         .then(function() {
           return echonest.readProfileDataAsync(req.session.catalog_id);
@@ -102,11 +102,14 @@ module.exports = function( app, passport ) {
     res.render('home');
   });
 
+  app.get('/about', function( req, res ) {
+    res.render('about');
+  });
+
   app.get('/concerts', function( req, res ) {
     if ( !req.user ) {
       return res.redirect('/');
     }
     res.render('concerts');
   });
-}
-;
+};

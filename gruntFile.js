@@ -106,8 +106,8 @@ module.exports = function( grunt ) {
       }
     },
     watch: {
-      styles: {
-        files: ['app/views/styles/*'],
+      code: {
+        files: ['app/views/styles/*', 'app/public/js/app.js'],
         tasks: 'build',
         options: {
           spawn: false
@@ -116,10 +116,10 @@ module.exports = function( grunt ) {
     }
   });
 
-  grunt.registerTask('build:dev', [ 'clean', 'sass:dist', 'cssmin:combine', 'copy:css',
+  grunt.registerTask('build', [ 'clean', 'sass:dist', 'cssmin:combine', 'copy:css',
     'shell:compileTemplates', 'uglify:dev' ]);
-  grunt.registerTask('build:prod', [ 'build:dev', 'uglify:prod']);
-  grunt.registerTask('start:dev', ['env:dev', 'concurrent:dev']);
+  grunt.registerTask('build:prod', [ 'build', 'uglify:prod']);
+  grunt.registerTask('start', ['env:dev', 'concurrent:dev']);
   grunt.registerTask('test', ['env:test', 'mochaTest:test']);
   grunt.registerTask('test:client', 'mochaTest:integration');
 };

@@ -1,8 +1,5 @@
-$font-stack : 'Open Sans', sans-serif;
-$normal : 400;
-$semibold : 600;
-$bold : 500;
-$light : 300;
+@import "header";
+@import "_common";
 
 $main-orange : #FFBA03;
 
@@ -11,12 +8,42 @@ html, button, input, select, textarea,
   font-family : $font-stack;
 }
 
-body {
-  background-color : black;
+.pure-button.button-secondary {
+  background-color: #42B8DD
 }
 
+body {
+  background: url( '../images/concerts.jpg' ) no-repeat center center fixed;
+  background-size: cover;
+}
+
+h1 {
+  color: black;
+  font-weight: $normal;
+}
 h3 {
   font-weight : $semibold;
+}
+
+.main-landing {
+  background-color: $off-white;
+  width: 50%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 25%;
+  margin-left:auto;
+  margin-right:auto;
+  padding: 3%;
+  border-radius: 0.5em;
+
+  h1, h3 {
+    color: black;
+  }
+
+  h3 {
+    font-weight: $light;
+  }
 }
 
 #map-canvas {
@@ -30,6 +57,10 @@ h3 {
 .box-header {
   background-color : $main-orange;
   text-align       : center;
+
+  h1 {
+    margin: 0.4em 0;
+  }
 }
 
 .box-body {
@@ -37,7 +68,7 @@ h3 {
 }
 
 .location {
-  margin-bottom : 5%;
+  margin-bottom : 3%;
   padding       : 2%;
 }
 
@@ -105,15 +136,19 @@ h3 {
   margin        : 0 auto;
 }
 
-.next-page {
-  margin           : 0 10% 0 10%;
+.getEvents {
+  margin: 0 10%;
+  padding-bottom: 2em;
+  text-align: center;
   background-color : white;
   justify-content  : flex-end;
+
+  .getEventsBtn {
+    //  background-color : #FFBA03;
+    letter-spacing: 0em; //Fix button scrunching in FF
+  }
 }
 
-.nextPageBtn {
-  background-color : #FFBA03;
-}
 
 .event-listings {
   background-color : white;
@@ -126,7 +161,7 @@ h3 {
   left             : 0;
   bottom           : 0;
   background-color : rgba(0, 0, 0, 0.65);
-  z-index          : 9998;
+  z-index          : $zIndexOverlay;
 }
 
 .hide {

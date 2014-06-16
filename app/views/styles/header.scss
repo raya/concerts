@@ -1,0 +1,31 @@
+@import "_common";
+
+header {
+  position: fixed;
+  z-index: $zIndexHeader;
+  top: 0;
+  width: 100%;
+  background-color: #000;
+
+  .menu {
+    margin: 0;
+    padding: 1em;
+    height: 1.5em;
+  }
+
+  .menu-item {
+    list-style-type: none;
+    float:right;
+    margin-right: 1em;
+
+    a {
+      font-weight: $light;
+      color: $off-white;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: gray;
+    }
+  }
+}

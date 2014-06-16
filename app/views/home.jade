@@ -1,8 +1,9 @@
 extends ./layout
 block content
-  h1 Concerts
 
-  p Authorize us on rdio
-
-  form( action="/users/authorize", method="POST" )
-    input( type="image", src="../public/images/rdio-logo.png", alt="rdio logo")
+  section.main-landing
+    .box2
+      h1 Concert Listings for your favorite artists
+      h3  See who in your rdio collection is touring your city this week.
+      form( action="/users/authorize", method="POST" )
+        button.rdio-signin.pure-button.pure-button-primary Sign in with rdio

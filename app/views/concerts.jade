@@ -5,19 +5,19 @@ block content
 
   section.pure-g.box
     .pure-u-1.box-header
-      h1 Looking Around Here?
+      h1 Concerts
     .pure-u-1.box-body
       #map-canvas
       .spinner.traditional
       form.pure-form.location( method="post" )
         fieldset
-          legend Wrong area? Enter your city below.
+          legend Look somewhere else
           label( for="city" )
             input( type="text", placeholder="city name", name="city", id="city" )
-          button.pure-button.pure-button-primary( type="submit", name="citysubmitbtn" ) submit
+          button.pure-button.button-secondary( type="submit", name="citysubmitbtn" ) Change city
         .error-msg
-  section.pure-g.next-page
-    button.pure-button.nextPageBtn( type="submit", name="nextPageBtn" ) next
+  section.pure-g.getEvents
+    button.pure-button.pure-button-primary.getEventsBtn( type="submit", name="getEventsBtn" ) Show concerts
   section.pure-g.event-listings.box.hide
 
 
