@@ -1,6 +1,6 @@
 var chaiAsPromised = require('chai-as-promised'),
-    config = require('../app/config/config'),
-    echonest = require('../app/utils/echonest'),
+    config = require( __dirname + '/../libs/config/config'),
+    echonest = require('../libs/echonest'),
     _ = require('lodash'),
     nock = require('nock');
 chai.use(chaiAsPromised);

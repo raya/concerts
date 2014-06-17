@@ -2,7 +2,7 @@
  app.js
  */
 
-var config = require('./config/config'),
+var config = require('./libs/config/config'),
     express = require('express'),
     http = require('http'),
     kue = require( 'kue'),
@@ -37,11 +37,11 @@ app.use(app.router);
 kue.app.listen( config.KUE_PORT );
 
 // Bootstrap passport file
-require( './config/passport' )( passport, config );
+require( './libs/config/passport' )( passport, config );
 // Bootstrap routes
 require('./routes/index')(app, passport);
 
-app.use('/public', express.static(__dirname + '/public'));
+app.use('/public', express.static( __dirname + '/public'));
 
 http.createServer(app).listen(port, function() {
   console.log('Server listening on port', port);

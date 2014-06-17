@@ -1,12 +1,12 @@
-var integration = require('../utils/integration'),
-    logger = require('../utils/logger'),
+var integration = require('../libs/integration'),
+    logger = require('../libs/logger'),
     Promise = require('bluebird'),
-    queue = require('../utils/queue'),
+    queue = require('../libs/queue'),
     _ = require('lodash');
 
-var echonest = Promise.promisifyAll(require('../utils/echonest')),
-    rdio = Promise.promisifyAll(require('../utils/rdio')),
-    songkick = Promise.promisifyAll(require('../utils/songkick'));
+var echonest = Promise.promisifyAll(require('../libs/echonest')),
+    rdio = Promise.promisifyAll(require('../libs/rdio')),
+    songkick = Promise.promisifyAll(require('../libs/songkick'));
 
 module.exports = function( app, passport ) {
 

@@ -1,4 +1,4 @@
-var config = require('../config/config'),
+var config = require('./config/config'),
     logger = require('./logger'),
     moment = require('moment'),
     request = require('request'),

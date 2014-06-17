@@ -1,4 +1,4 @@
-var config = require('../config/config'),
+var config = require('./config/config'),
     fs = require('fs'),
     logger = require('./logger'),
     Promise = require('bluebird'),
@@ -14,7 +14,7 @@ Promise.promisifyAll(fs);
 exports.getArtists = function( is_demo_user, access_token, callback ) {
   // Demo users get fake data
   if ( is_demo_user ) {
-    fs.readFileAsync( './app/config/test_data.json' )
+    fs.readFileAsync( './libs/config/test_data.json' )
       .then( JSON.parse )
       .then( function( result ) {
         logger.log('info', 'Demo user data being returned');

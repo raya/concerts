@@ -4,7 +4,8 @@ var colors = {
   'debug' : 'blue',
   'info' : 'green',
   'error' : 'red'
-};
+},
+  LOG_FILE = './logs/concerts.log';
 
 var logger = module.exports = new (winston.Logger)({
   transports: [
@@ -12,7 +13,7 @@ var logger = module.exports = new (winston.Logger)({
       colorize: true
     }),
     new (winston.transports.File)({
-      filename : __dirname + '/../../logs/concerts.log'
+      filename : LOG_FILE
     })
   ],
   colors: colors

@@ -1,7 +1,7 @@
 var chaiAsPromised = require('chai-as-promised'),
-    config = require('../app/config/config'),
+    config = require( __dirname + '/../libs/config/config'),
     nock = require('nock'),
-    songkick = require('../app/utils/songkick'),
+    songkick = require('../libs/songkick'),
     _ = require('lodash');
 chai.use(chaiAsPromised);
 

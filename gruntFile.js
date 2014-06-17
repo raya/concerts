@@ -3,7 +3,7 @@ module.exports = function( grunt ) {
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
-    clean: ['build/*', 'app/public/js/app.min.js', 'app/public/stylesheets/app.min.css'],
+    clean: ['build/*', 'public/js/app.min.js', 'public/stylesheets/app.min.css'],
     concurrent: {
       dev: {
         tasks: ['nodemon:dev', 'watch'],
@@ -17,7 +17,7 @@ module.exports = function( grunt ) {
         files :
           [
             { src : 'build/app.min.css',
-              dest : 'app/public/stylesheets/app.min.css'}
+              dest : 'public/stylesheets/app.min.css'}
           ]
       }
     },
@@ -26,7 +26,7 @@ module.exports = function( grunt ) {
         files: {
           'build/app.min.css': ['bower_components/pure/pure-min.css',
             'bower_components/pure/grids-responsive-min.css',
-            'app/views/styles/css_spinner.css',
+            'views/styles/css_spinner.css',
             'build/app_sass.css' ]
         }
       }
@@ -60,7 +60,7 @@ module.exports = function( grunt ) {
     },
     nodemon: {
       dev: {
-        script: 'app/app.js',
+        script: 'app.js',
         ignore : [ '*.log', 'logs/concerts.log', '*.md', 'node_modules/**' ]
       }
     },
@@ -70,13 +70,13 @@ module.exports = function( grunt ) {
           outputStyle: 'nested'
         },
         files: {
-          'build/app_sass.css' : 'app/views/styles/app.scss'
+          'build/app_sass.css' : 'views/styles/app.scss'
         }
       }
     },
     shell: {
       compileTemplates: {
-        command: './node_modules/templatizer/bin/cli -d app/views/client_templates -o build/templates.js'
+        command: './node_modules/templatizer/bin/cli -d views/client_templates -o build/templates.js'
       }
     },
     uglify: {
@@ -86,10 +86,10 @@ module.exports = function( grunt ) {
           mangle: true
         },
         files: {
-          'app/public/js/app.min.js': [
+          'public/js/app.min.js': [
             'bower_components/momentjs/min/moment.min.js',
             'build/templates.js',
-            'app/public/js/app.js' ]
+            'public/js/app.js' ]
         }
       },
       dev: {
@@ -98,16 +98,16 @@ module.exports = function( grunt ) {
           mangle : false
         },
         files : {
-          'app/public/js/app.min.js' : [
+          'public/js/app.min.js' : [
             'bower_components/momentjs/min/moment.min.js',
             'build/templates.js',
-            'app/public/js/app.js' ]
+            'public/js/app.js' ]
         }
       }
     },
     watch: {
       code: {
-        files: ['app/views/styles/*', 'app/public/js/app.js'],
+        files: ['views/styles/*', 'public/js/app.js'],
         tasks: 'build',
         options: {
           spawn: false

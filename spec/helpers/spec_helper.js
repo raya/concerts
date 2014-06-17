@@ -1,4 +1,4 @@
-var app = require( '../../app/app' );
+var app = require( '../../app' );
 var chai = require('chai');
 
 global.app = app;

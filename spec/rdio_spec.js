@@ -1,8 +1,8 @@
 var chaiAsPromised = require('chai-as-promised'),
-    config = require('../app/config/config'),
+    config = require('../libs/config/config'),
     nock = require('nock'),
     parseUri = require('parseUri'),
-    rdio = require('../app/utils/rdio');
+    rdio = require('../libs/rdio');
 
 chai.use(chaiAsPromised);
 

@@ -5,7 +5,7 @@
  * catalog_update - polls echonest for ticket updates
 
  */
-var config = require('../config/config'),
+var config = require('./config/config'),
     kue = require('kue'),
     logger = require('./logger.js');
 Promise = require('bluebird');

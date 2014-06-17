@@ -1,7 +1,7 @@
-var config = require( '../app/config/config'),
+var config = require( __dirname + '/../libs/config/config'),
     kue = require('kue'),
     mockkue = require('mock-kue'),
-    queue = require('../app/utils/queue'),
+    queue = require('../libs/queue'),
     request = require('request');
 
 describe('queue', function() {

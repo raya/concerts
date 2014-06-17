@@ -1,4 +1,4 @@
-extends ./layout
+extends layout
 block content
 
   section.main-landing
@@ -7,6 +7,7 @@ block content
       h3  See who in your rdio collection is touring your city this week.
       form( action="/users/authorize", method="POST" )
         button.rdio-signin.pure-button.pure-button-primary Sign in with rdio
+      p or
       form( action="/users/demo", method="POST" )
-        button.demo-signin.pure-button.pure-button-primary Demo
+        button.demo-signin.pure-button.pure-button-primary Try a Demo
 

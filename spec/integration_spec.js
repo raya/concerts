@@ -1,4 +1,4 @@
-var integration = require('../app/utils/integration');
+var integration = require('../libs/integration');
 
 describe('integration', function() {
   describe('matching concerts with artist ids', function() {
