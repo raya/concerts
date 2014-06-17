@@ -11,6 +11,11 @@ var echonest = Promise.promisifyAll(require('../utils/echonest')),
 module.exports = function( app, passport ) {
 
   app.post('/users/authorize', passport.authenticate('oauth2'));
+  app.post('/users/demo', function( req, res ) {
+    req.session.is_demo_user = true;
+    req.session.save();
+    res.redirect( '/concerts');
+  });
 
   app.get('/users/authorize/rdio/callback',
     passport.authenticate('oauth2', {
@@ -22,8 +27,9 @@ module.exports = function( app, passport ) {
 
   app.get('/users/new', function( req, res ) {
       logger.log('info', 'route hit: /users/new');
+      var access_token = req.session.passport.user ? req.session.passport.user.accessToken : false;
       Promise.all([
-        rdio.getArtistsAsync(req.session.passport.user.accessToken),
+        rdio.getArtistsAsync( req.session.is_demo_user, access_token ) ,
         echonest.createCatalogProfileAsync()
       ])
         .catch(function( err ) {
@@ -107,7 +113,7 @@ module.exports = function( app, passport ) {
   });
 
   app.get('/concerts', function( req, res ) {
-    if ( !req.user ) {
+    if ( !req.user && !req.session.is_demo_user ) {
       return res.redirect('/');
     }
     res.render('concerts');
