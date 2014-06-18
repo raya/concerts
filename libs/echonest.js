@@ -197,18 +197,23 @@ exports.readProfileData = function( catalog_id, callback ) {
   });
 };
 
-// TODO - add maximum number of tries
 // Repeatedly reload the request object to see if req.artists has been set
 exports.pollData = function( req, callback ) {
+  var attempts = 0,
+      max_attempts = 5;
   var timer = setInterval(function() {
     req.session.reload(function( err ) {
       if ( err ) {
         logger.log('error', 'Error reloading session data while polling for echonest artists: %j', err );
       }
 
+      attempts++;
       if ( req.session.artists ) {
         clearInterval(timer);
         return callback(null, true);
+      } else if ( attempts >= max_attempts ) {
+        clearInterval(timer);
+        return callback( 'Timeout from polling Echonest for artist data' );
       }
     });
   }, 2000);
