@@ -2,7 +2,7 @@ bower_components
 build/*
 logs/*
 node_modules
-app/public/stylesheets/app.min.css
-app/public/js/app.min.js
+public/stylesheets/app.min.css
+public/js/app.min.js
 .idea
 TODO.md
