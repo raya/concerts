@@ -9,7 +9,6 @@
       geoIp = {},
       jqueryMap = {
         $errorField : $('.error-msg').eq(0),
-        $mainBox : $('.box').eq(0),
         mapElem : $('#map-canvas')[0],
         $overlay : $('.overlay').eq(0),
         $spinner : $('.spinner').eq(0)
@@ -81,17 +80,15 @@
   }
 
   function displayConcerts( concerts ) {
-    var $main = jqueryMap.$mainBox;
-
-    // update heading
-    $main.find('.box-header')
-      .empty()
-      .append('<h1>Events</h1>');
 
     var $events = $('.event-listings').eq(0);
     $events.removeClass('hide')
       .empty()
-      .append(templatizer.event_listings({ concerts : concerts }));
+      .append(templatizer.event_listings({
+        concerts : concerts,
+        search_start : moment().format('MMMM Do'),
+        search_end : moment().add('days', 7).format('MMMM Do' )
+      }));
   }
 
   // Change map of displayed city
