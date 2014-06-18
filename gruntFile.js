@@ -107,7 +107,7 @@ module.exports = function( grunt ) {
     },
     watch: {
       code: {
-        files: ['views/styles/*', 'public/js/app.js'],
+        files: ['views/styles/*', 'views/client_templates/*', 'public/js/app.js'],
         tasks: 'build',
         options: {
           spawn: false
