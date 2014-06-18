@@ -45,7 +45,9 @@
         marker = new google.maps.Circle(markerOptions);
       });
     } else {
-      console.log('geolocation not supported');
+      jqueryMap.$errorField
+        .empty()
+        .append("We can't find your current location. Enter a city to get started.");
     }
   }
 
@@ -69,7 +71,7 @@
         map.setCenter(results[0].geometry.location);
         markerOptions.map = map;
         markerOptions.center = results[0].geometry.location;
-        marker.setMap(null); //clear previous marker
+        if ( marker ) { marker.setMap(null); } //clear previous marker if it exists
         marker = new google.maps.Circle(markerOptions);
       } else {
         jqueryMap.$errorField
@@ -101,7 +103,16 @@
   }
 
   // Get list of songkick metro ids
-  function onNextPage() {
+  function onGetEvents() {
+    jqueryMap.$errorField
+      .empty();
+
+    if ( !hasUserLocation() ) {
+      jqueryMap.$errorField
+        .append('Please enter a city.');
+      return;
+    }
+
     jqueryMap.$spinner.toggleClass('csspinner');
     jqueryMap.$overlay.toggleClass('hide');
 
@@ -135,10 +146,12 @@
 
   // Validate city input form and display error messages
   function validateForm( address ) {
+    jqueryMap.$errorField.empty();
+
     var text = $.trim(address);
     if ( text == "" ) {
-      jqueryMap.$errorField.empty()
-        .append('Form cannot be blank');
+      jqueryMap.$errorField
+        .append('Please enter a city.');
     } else {
       return text;
     }
@@ -154,6 +167,10 @@
     })
   }
 
+  function hasUserLocation() {
+    return geoIp.lat && geoIp.long;
+  }
+
   // Initialize page
   function init() {
     getArtists();
@@ -162,7 +179,7 @@
 
   // Event Handlers
   $('form.location').on('submit', onChangeCity);
-  $('button[name="getEventsBtn"]').on('click', onNextPage);
+  $('button[name="getEventsBtn"]').on('click', onGetEvents);
 
   // Initialize the page
   init();
