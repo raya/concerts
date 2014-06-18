@@ -126,11 +126,12 @@
     var i, origTime;
     for ( i = 0; i < concerts.length; i++ ) {
       concerts[i].formatted_start_date = moment(concerts[i].start.date).format('MMM DD');
-      debugger;
-      origTime = moment(concerts[i].start.time, 'HH');
-      console.log('concerts[i].start.time', concerts[i].start.time );
-      console.log('orig time:', origTime );
-      concerts[i].start.time = origTime.format('hh:mmA');
+      if ( concerts[i].start.time == null ) {
+        concerts[i].start.time = 'Unavailable';
+      } else {
+        origTime = moment(concerts[i].start.time, 'HH');
+        concerts[i].start.time = origTime.format('hh:mmA');
+      }
     }
     return concerts;
   }
