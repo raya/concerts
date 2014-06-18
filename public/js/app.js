@@ -45,9 +45,7 @@
         marker = new google.maps.Circle(markerOptions);
       });
     } else {
-      jqueryMap.$errorField
-        .empty()
-        .append("We can't find your current location. Enter a city to get started.");
+      appendError("We can't find your current location. Enter a city.");
     }
   }
 
@@ -71,12 +69,12 @@
         map.setCenter(results[0].geometry.location);
         markerOptions.map = map;
         markerOptions.center = results[0].geometry.location;
-        if ( marker ) { marker.setMap(null); } //clear previous marker if it exists
+        if ( marker ) {
+          marker.setMap(null);
+        } //clear previous marker if it exists
         marker = new google.maps.Circle(markerOptions);
       } else {
-        jqueryMap.$errorField
-          .empty()
-          .append('We can\'t find this city. Try again');
+        appendError("We can't find this city. Try again");
       }
     });
   }
@@ -89,7 +87,7 @@
       .append(templatizer.event_listings({
         concerts : concerts,
         search_start : moment().format('MMMM Do'),
-        search_end : moment().add('days', 7).format('MMMM Do' )
+        search_end : moment().add('days', 7).format('MMMM Do')
       }));
   }
 
@@ -150,8 +148,7 @@
 
     var text = $.trim(address);
     if ( text == "" ) {
-      jqueryMap.$errorField
-        .append('Please enter a city.');
+      appendError('Please enter a city.');
     } else {
       return text;
     }
@@ -161,14 +158,28 @@
   function getArtists() {
     $.ajax({
       url : '/users/new'
+    }).fail(function( err ) {
+      appendError('Error getting artist list. Please try again later.');
     }).done(function( concerts ) {
       artists = concerts;
       console.log('concerts returned', concerts);
-    })
+    });
+  }
+
+  // toggle overlay and spinner
+  function toggleOverlay() {
+    jqueryMap.$overlay.toggleClass('hide');
+    jqueryMap.$spinner.toggleClass('csspinner');
   }
 
   function hasUserLocation() {
     return geoIp.lat && geoIp.long;
+  }
+
+  function appendError( msg ) {
+    jqueryMap.$errorField
+      .empty()
+      .append(msg);
   }
 
   // Initialize page

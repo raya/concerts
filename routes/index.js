@@ -14,7 +14,7 @@ module.exports = function( app, passport ) {
   app.post('/users/demo', function( req, res ) {
     req.session.is_demo_user = true;
     req.session.save();
-    res.redirect( '/concerts');
+    res.redirect('/concerts');
   });
 
   app.get('/users/authorize/rdio/callback',
@@ -25,38 +25,28 @@ module.exports = function( app, passport ) {
       res.redirect('/concerts');
     });
 
-  app.get('/users/new', function( req, res ) {
+  app.get('/users/new', function( req, res, next ) {
       logger.log('info', 'route hit: /users/new');
       var access_token = req.session.passport.user ? req.session.passport.user.accessToken : false;
       Promise.all([
-        rdio.getArtistsAsync( req.session.is_demo_user, access_token ) ,
+        rdio.getArtistsAsync(req.session.is_demo_user, access_token) ,
         echonest.createCatalogProfileAsync()
       ])
-        .catch(function( err ) {
-          logger.log('error', 'Error getting Rdio artist list or creating Echonest Profile : %j', err);
-        }).
-        spread(function( artists, catalog_id ) {
+        .spread(function( artists, catalog_id ) {
           logger.log('info', 'Rdio artist list retrieved. Echonest Catalog profile created. catalog_id: ', catalog_id);
-          //TODO - Handle user not having artists
           req.session.catalog_id = catalog_id;
           req.session.save();
           var catalog_file = echonest.createCatalogDataFile(artists);
           return echonest.sendFileAsync(catalog_file, catalog_id);
-        }).catch(function( err ) {
-          logger.log('error', 'Error sending Echonest file: %j', err);
         })
         .then(function( ticket_id ) {
+          logger.log('info', 'Adding polling job');
           return new Promise(function( resolve, reject ) {
             queue.addPollingJob(ticket_id, resolve);
           });
-        }).catch(function( err ) {
-          logger.log('error', 'Error polling for Echonest ticket id ', err);
         })
         .then(function() {
           return echonest.readProfileDataAsync(req.session.catalog_id);
-        })
-        .catch(function( err ) {
-          logger.log('error', 'Error reading echonest profile data: %j', err);
         })
         .then(function( results ) {
           req.session.reload(function() {
@@ -66,22 +56,21 @@ module.exports = function( app, passport ) {
             logger.log('info', 'route : Deleting catalog id', req.session.catalog_id);
             echonest.deleteCatalogAsync(req.session.catalog_id);
           });
+        })
+        .catch(function( err ) {
+          logger.log('error', 'Error in route /users/new', err);
+          res.end(500);
+          return next();
         });
     }
   );
 
-  app.get('/events', function( req, res ) {
+  app.get('/events', function( req, res, next ) {
     songkick.getMetroIdsAsync(req.query.user_coordinates)
-      .catch(function( err ) {
-        logger.log('error', 'Error retrieving Songkick Metro ids:', err);
-      })
       .then(function( metro_ids ) {
         return Promise.map(metro_ids, function( metro_id ) {
           return songkick.getConcerts(metro_id);
         });
-      })
-      .catch(function( err ) {
-        logger.log('error', 'Error retrieving Songkick concerts:', err);
       })
       .then(function( results ) {
         req.session.reload(function() {
@@ -93,13 +82,15 @@ module.exports = function( app, passport ) {
       .then(function() {
         return echonest.pollDataAsync(req);
       })
-      .catch(function( err ) {
-        logger.log('err', 'Error getting Echonest data in Songkick route %j:', err);
-      })
       .then(function() {
         var matching_concerts = integration.filterConcertMatches(req.session.artists, req.session.concerts);
         logger.log('info', 'Artist-Concert matches success. Sending data to client.');
         res.json(matching_concerts);
+      })
+      .catch(function( err ) {
+        logger.log('error', 'Error in route /events', err);
+        res.end(500);
+        return next();
       });
   });
 
