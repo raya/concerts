@@ -111,8 +111,7 @@
       return;
     }
 
-    jqueryMap.$spinner.toggleClass('csspinner');
-    jqueryMap.$overlay.toggleClass('hide');
+    toggleOverlay();
 
     $.ajax({
       url : '/events',
@@ -120,11 +119,11 @@
         user_coordinates : geoIp
       }
     }).done(function( concerts ) {
-      jqueryMap.$overlay.toggleClass('hide');
-      jqueryMap.$spinner.toggleClass('csspinner');
+      toggleOverlay();
       console.log('concerts received', concerts);
       formatConcerts(concerts);
       displayConcerts(concerts);
+      // TODO - change focus
     });
   }
 

@@ -2,11 +2,13 @@
 @import "_common";
 
 $main-orange : #FFBA03;
+$border_lvl : 0.5em;
 
 html, button, input, select, textarea,
 .pure-g [class *= "pure-u"] {
   font-family : $font-stack;
 }
+
 
 .pure-button.button-secondary {
   background-color: #42B8DD
@@ -16,6 +18,7 @@ html, button, input, select, textarea,
 body {
   background: url( '../images/concerts.jpg' ) no-repeat center center fixed;
   background-size: cover;
+  min-width: 20em; /* 320px / 16 */
 }
 
 h1 {
@@ -40,6 +43,7 @@ h3 {
   top: 25%;
   margin-left:auto;
   margin-right:auto;
+  margin-bottom: 10%;
   padding: 3%;
   border-radius: 0.5em;
   text-align: center;
@@ -61,7 +65,7 @@ h3 {
 }
 
 #map-canvas {
-  height : 300px;
+  height : 18em;
 }
 
 .box {
@@ -71,6 +75,7 @@ h3 {
 .box-header {
   background-color : $main-orange;
   text-align       : center;
+  border-radius: $border_lvl $border_lvl 0 0;
 
   h1 {
     margin: 0.4em 0;
@@ -79,8 +84,12 @@ h3 {
 
 .box-subheader {
   background-color: $off-white;
-  height: 2.5em;
+  height: 4.5em;
   padding: 0.5em 0;
+
+  img {
+    margin-top: 0.8em;
+  }
 }
 
 .box-body {
@@ -110,8 +119,12 @@ h3 {
 }
 
 .event-wrapper {
-  padding    : 4%;
+  padding: 2%;
   box-shadow : inset 0 0 1px #333333;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background-color: white;
 }
 
 .event {
@@ -127,19 +140,20 @@ h3 {
   color            : #6e6e6e;
 }
 
+.event-listings {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .event-date-box,
 .event-info-box {
   display        : table-cell;
-  height         : 100%;
   vertical-align : top;
-}
-
-.event-date-box {
-  width : 40%;
+  padding: 5% 0;
 }
 
 .event-info-box {
-  width : 60%;
+  padding-left: 5%;
 }
 
 .event-info-box > h3 {
@@ -165,21 +179,15 @@ h3 {
 }
 
 .getEvents {
-  margin: 0 10%;
   padding-bottom: 2em;
   text-align: center;
   background-color : white;
   justify-content  : flex-end;
+  border-radius: 0 0 $border_lvl $border_lvl;
 
   .getEventsBtn {
-    //  background-color : #FFBA03;
     letter-spacing: 0em; //Fix button scrunching in FF
   }
-}
-
-
-.event-listings {
-  background-color : white;
 }
 
 .overlay {
@@ -196,8 +204,14 @@ h3 {
   display : none;
 }
 
-/*Small screens*/
-@media screen and (max-width : 35.5em) {
+
+
+
+// Small - Medium
+@media screen and (max-width : 52.8675em) {
+  .box {
+    margin: 10% 15%;
+  }
   .event-wrapper {
     text-align : center;
   }
@@ -209,6 +223,36 @@ h3 {
   }
 
   .event-date {
-    width : 100%;
+//    width : 100%;
+  }
+
+  .event-info-box {
+    padding-left: 0;
+  }
+}
+
+// small single col
+@media screen and (max-width: 35.5em ) {
+
+  .main-landing {
+    width: 80%;
+  }
+
+  .box-header {
+    margin-top: 4em;
+  }
+
+  .event-listings {
+    .box-header {
+      margin-top: 1em;
+    }
+  }
+
+  .box {
+    margin: 10% 2%;
+  }
+
+  #map-canvas {
+    height: 12em;
   }
 }
