@@ -39,7 +39,7 @@ exports.getMetroIds = function( user_coordinates, callback ) {
 exports.getConcerts = function( metro_id, start_date, end_date ) {
   return new Promise(function( resolve, reject ) {
     start_date = start_date || formatCurrentDate();
-    end_date = end_date || formatEndDate(7);
+    end_date = end_date || formatEndDate(start_date, 7);
 
     var url = config.SONGKICK_API_URL + 'metro_areas/' + metro_id + '/calendar.json?'
       + '&apikey=' + config.SONGKICK_API_KEY
@@ -154,7 +154,8 @@ function formatCurrentDate() {
 }
 
 // Return formatted string of the date X days from now as YYYY-MM-DD
-function formatEndDate( numDaysFromNow ) {
-  var nextDays = moment().add('days', numDaysFromNow);
-  return nextDays.format('YYYY-MM-DD');
+function formatEndDate( start_date, numDaysFromNow ) {
+  return moment(start_date, "YYYY-MM-DD")
+    .add('days', numDaysFromNow)
+    .format('YYYY-MM-DD');
 }

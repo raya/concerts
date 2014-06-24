@@ -1,7 +1,8 @@
 /*
  integration.js
  */
-var _ = require('lodash');
+var _ = require('lodash'),
+    moment = require('moment');
 
 // Return an array of concerts where the artist id in concerts matches
 // an artist id in artist_ids.
@@ -20,6 +21,13 @@ exports.filterConcertMatches = function( artist_ids, concerts ) {
     }
   }
   return matches;
+};
+
+exports.sortByDate = function( concerts ) {
+  concerts.sort( function( a, b ) {
+    return moment(a.start.date).isAfter(b.start.date);
+  });
+  return concerts;
 };
 
 // Saves necessary concert data to object

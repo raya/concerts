@@ -7,8 +7,11 @@
   var artists,
       geocoder,
       geoIp = {},
+      initialStartDate = moment().format('MMMM Do'),
       jqueryMap = {
         $errorField : $('.error-msg').eq(0),
+        $eventsBtn : $('button[name="getEventsBtn"]').eq(0),
+        $events : $('.event-listings').eq(0),
         mapElem : $('#map-canvas')[0],
         $overlay : $('.overlay').eq(0),
         $spinner : $('.spinner').eq(0)
@@ -27,7 +30,8 @@
         fillOpacity : 0.35,
         radius : 60000 //TODO - this is not accurate
       },
-      spinner = $('.csspinner');
+      spinner = $('.csspinner'),
+      startDate = moment().format('YYYY-MM-DD');
 
   // Initialize Google Maps
   function initializeMap() {
@@ -80,14 +84,22 @@
   }
 
   function displayConcerts( concerts ) {
+    var $eventDates = jqueryMap.$events.find('.search-dates').eq(0);
+    var searchDate = 'For '
+      + initialStartDate
+      + ' - '
+      + moment(startDate, 'YYYY-MM-DD').format('MMMM Do');
 
-    var $events = $('.event-listings').eq(0);
-    $events.removeClass('hide')
-      .empty()
+    $eventDates.empty()
+      .append(searchDate);
+
+    // Remove any listings which say event not found
+    jqueryMap.$events.find('.empty-listings')
+      .remove();
+
+    jqueryMap.$events.removeClass('hide')
       .append(templatizer.event_listings({
-        concerts : concerts,
-        search_start : moment().format('MMMM Do'),
-        search_end : moment().add('days', 7).format('MMMM Do')
+        concerts : concerts
       }));
   }
 
@@ -97,6 +109,18 @@
     var address = $('form.location').find('input[id="city"]').val();
     if ( validateForm(address) ) {
       geocodeMap(address);
+
+      // Update UI if events were previously retrieved
+      if ( !jqueryMap.$events.hasClass('hide') ) {
+        startDate = moment().format('YYYY-MM-DD');
+        jqueryMap.$eventsBtn
+          .empty()
+          .append('Show concerts');
+        jqueryMap.$events
+          .addClass('hide')
+          .find('.event-wrapper')
+          .remove();
+      }
     }
   }
 
@@ -116,14 +140,18 @@
     $.ajax({
       url : '/events',
       data : {
-        user_coordinates : geoIp
+        user_coordinates : geoIp,
+        start_date : startDate
       }
     }).done(function( concerts ) {
       toggleOverlay();
       console.log('concerts received', concerts);
+      incStartDate();
+      jqueryMap.$eventsBtn
+        .empty()
+        .append('Check the next 7 days');
       formatConcerts(concerts);
       displayConcerts(concerts);
-      // TODO - change focus
     });
   }
 
@@ -181,6 +209,10 @@
       .append(msg);
   }
 
+  function incStartDate() {
+    startDate = moment(startDate, "YYYY-MM-DD").add('days', 7).format('YYYY-MM-DD');
+  }
+
   // Initialize page
   function init() {
     getArtists();
@@ -189,7 +221,7 @@
 
   // Event Handlers
   $('form.location').on('submit', onChangeCity);
-  $('button[name="getEventsBtn"]').on('click', onGetEvents);
+  jqueryMap.$eventsBtn.on('click', onGetEvents );
 
   // Initialize the page
   init();

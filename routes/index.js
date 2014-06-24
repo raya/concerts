@@ -69,7 +69,7 @@ module.exports = function( app, passport ) {
     songkick.getMetroIdsAsync(req.query.user_coordinates)
       .then(function( metro_ids ) {
         return Promise.map(metro_ids, function( metro_id ) {
-          return songkick.getConcerts(metro_id);
+          return songkick.getConcerts(metro_id, req.query.start_date);
         });
       })
       .then(function( results ) {
@@ -83,9 +83,10 @@ module.exports = function( app, passport ) {
         return echonest.pollDataAsync(req);
       })
       .then(function() {
-        var matching_concerts = integration.filterConcertMatches(req.session.artists, req.session.concerts);
+        var matches = integration.filterConcertMatches(req.session.artists, req.session.concerts);
+        matches = integration.sortByDate( matches );
         logger.log('info', 'Artist-Concert matches success. Sending data to client.');
-        res.json(matching_concerts);
+        res.json(matches);
       })
       .catch(function( err ) {
         logger.log('error', 'Error in route /events', err);
