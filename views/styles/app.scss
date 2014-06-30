@@ -204,7 +204,17 @@ h3 {
   display : none;
 }
 
+.about-page {
+  text-align: left;
+}
 
+.minor {
+  font-weight: $normal;
+}
+
+h4.highlight {
+  font-weight: $semibold;
+}
 
 
 // Small - Medium
