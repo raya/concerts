@@ -44,6 +44,7 @@
   },
   "scripts": {
     "start": "NODE_ENV=production pm2 start app/app.js",
-    "stop": "pm2 stop all"
+    "stop": "pm2 stop all",
+    "test": "grunt test"
   }
 }
