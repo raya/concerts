@@ -99,6 +99,10 @@ h3 {
 .location {
   margin-bottom : 3%;
   padding       : 2%;
+
+  legend {
+    border-bottom: none;
+  }
 }
 
 .event-listings.box {
